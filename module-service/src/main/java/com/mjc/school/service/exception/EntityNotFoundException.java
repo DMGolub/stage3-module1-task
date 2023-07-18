@@ -1,4 +1,4 @@
-package com.mjc.school.repository.exception;
+package com.mjc.school.service.exception;
 
 public final class EntityNotFoundException extends RuntimeException {
 

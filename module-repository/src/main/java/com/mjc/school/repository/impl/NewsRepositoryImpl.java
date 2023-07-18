@@ -2,11 +2,11 @@ package com.mjc.school.repository.impl;
 
 import com.mjc.school.repository.NewsRepository;
 import com.mjc.school.repository.domain.News;
-import com.mjc.school.repository.exception.EntityNotFoundException;
 import com.mjc.school.repository.utility.DataSource;
 import com.mjc.school.repository.utility.Utilities;
 
 import java.util.List;
+import java.util.Optional;
 
 public class NewsRepositoryImpl implements NewsRepository {
 
@@ -29,12 +29,11 @@ public class NewsRepositoryImpl implements NewsRepository {
 	}
 
 	@Override
-	public News getById(final long id) throws EntityNotFoundException {
+	public Optional<News> getById(final long id) {
 		final List<News> allNews = dataSource.getNews();
 		return allNews.stream()
 			.filter(n -> n.getId().equals(id))
-			.findFirst()
-			.orElseThrow(() -> new EntityNotFoundException("Can not find news by id = " + id));
+			.findFirst();
 	}
 
 	@Override
@@ -43,14 +42,14 @@ public class NewsRepositoryImpl implements NewsRepository {
 	}
 
 	@Override
-	public News update(final News news) throws EntityNotFoundException {
+	public Optional<News> update(final News news) {
 		final List<News> allNews = dataSource.getNews();
 		int index = Utilities.getIndexById(allNews, news.getId());
 		if (index != -1) {
 			allNews.set(index, news);
-			return news;
+			return Optional.of(news);
 		} else {
-			throw new EntityNotFoundException("Can not find news by id = " + news.getId());
+			return Optional.empty();
 		}
 	}
 

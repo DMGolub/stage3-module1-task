@@ -2,7 +2,6 @@ package com.mjc.school.repository.impl;
 
 import com.mjc.school.repository.NewsRepository;
 import com.mjc.school.repository.domain.News;
-import com.mjc.school.repository.exception.EntityNotFoundException;
 import com.mjc.school.repository.utility.DataSource;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Nested;
@@ -13,6 +12,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.times;
@@ -74,7 +74,7 @@ class NewsRepositoryImplTest {
 	class TestGetById {
 
 		@Test
-		void getById_shouldThrowEntityNotFoundException_whenNewsNotFound() {
+		void getById_shouldReturnEmptyOptional_whenNewsNotFound() {
 			final List<News> storage = Arrays.asList(
 				createTestNews(1L),
 				createTestNews(2L)
@@ -83,7 +83,7 @@ class NewsRepositoryImplTest {
 
 			NewsRepository repository = new NewsRepositoryImpl(dataSource);
 
-			assertThrows(EntityNotFoundException.class, () -> repository.getById(3L));
+			assertEquals(Optional.empty(), repository.getById(3L));
 			verify(dataSource, times(1)).getNews();
 		}
 
@@ -96,7 +96,7 @@ class NewsRepositoryImplTest {
 
 			NewsRepository repository = new NewsRepositoryImpl(dataSource);
 
-			assertEquals(expected, repository.getById(id));
+			assertEquals(Optional.of(expected), repository.getById(id));
 			verify(dataSource, times(1)).getNews();
 		}
 	}
@@ -132,7 +132,7 @@ class NewsRepositoryImplTest {
 	class TestUpdate {
 
 		@Test
-		void update_shouldThrowEntityNotFoundException_whenNewsWithGivenIdNotFound() {
+		void update_shouldReturnEmptyOptional_whenNewsWithGivenIdNotFound() {
 			final List<News> storage = new ArrayList<>();
 			storage.add(createTestNews(1L));
 			storage.add(createTestNews(2L));
@@ -141,7 +141,7 @@ class NewsRepositoryImplTest {
 			NewsRepository repository = new NewsRepositoryImpl(dataSource);
 			News updated = createTestNews(99L);
 
-			assertThrows(EntityNotFoundException.class, () -> repository.update(updated));
+			assertEquals(Optional.empty(), repository.update(updated));
 			verify(dataSource, times(1)).getNews();
 		}
 
@@ -159,7 +159,7 @@ class NewsRepositoryImplTest {
 			updated.setAuthorId(2L);
 			List<News> expected = Arrays.asList(createTestNews(1L), updated);
 
-			assertEquals(updated, repository.update(updated));
+			assertEquals(Optional.of(updated), repository.update(updated));
 			assertEquals(expected, storage);
 			verify(dataSource, times(1)).getNews();
 		}

@@ -1,8 +1,7 @@
 package com.mjc.school.repository;
 
-import com.mjc.school.repository.exception.EntityNotFoundException;
-
 import java.util.List;
+import java.util.Optional;
 
 public interface Repository<T> {
 
@@ -18,10 +17,9 @@ public interface Repository<T> {
 	 * Finds an entity with provided id in the data storage.
 	 *
 	 * @param id long entity id, should be positive.
-	 * @return T entity if it is found.
-	 * @throws EntityNotFoundException if entity is not found.
+	 * @return Optional<T> if entity is found and empty Optional otherwise.
 	 */
-	T getById(final long id) throws EntityNotFoundException;
+	Optional<T> getById(final long id);
 
 	/**
 	 * Finds all entities in the data storage.
@@ -31,13 +29,12 @@ public interface Repository<T> {
 	List<T> getAll();
 
 	/**
-	 * Updates provided entity in the data storage.
+	 * Updates provided entity in the data storage if the entity is found by id.
 	 *
 	 * @param t T entity to be updated.
-	 * @return updated entity.
-	 * @throws EntityNotFoundException if entity is not found.
+	 * @return Optional<T> with updated entity of empty Optional if entity is not found.
 	 */
-	T update(T t) throws EntityNotFoundException;
+	Optional<T> update(T t);
 
 	/**
 	 * Removes an entity from the data storage by given id.
