@@ -10,7 +10,6 @@ import com.mjc.school.service.exception.ValidationException;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.mockito.AdditionalAnswers;
-import org.modelmapper.ModelMapper;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -29,10 +28,9 @@ import static org.mockito.Mockito.when;
 
 class NewsServiceImplTest {
 
-	private final ModelMapper modelMapper = new ModelMapper();
 	private final NewsRepository newsRepository = mock(NewsRepository.class);
 	private final Service<NewsRequestDTO, NewsResponseDTO> newsService =
-		new NewsServiceImpl(newsRepository, modelMapper);
+		new NewsServiceImpl(newsRepository);
 
 	@Nested
 	class TestSave {
