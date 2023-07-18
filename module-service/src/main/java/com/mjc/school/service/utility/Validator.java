@@ -38,18 +38,18 @@ public class Validator {
 
 	public static void validateNewsRequestDTO(NewsRequestDTO request) {
 		validateRange(
-			request.title().length(),
+			request.getTitle().length(),
 			NEWS_TITLE_NAME,
 			NEWS_TITLE_MIN_LENGTH,
 			NEWS_TITLE_MAX_LENGTH
 		);
 		validateRange(
-			request.content().length(),
+			request.getContent().length(),
 			NEWS_CONTENT_NAME,
 			NEWS_CONTENT_MIN_LENGTH,
 			NEWS_CONTENT_MAX_LENGTH
 		);
-		validateNotNull(request.authorId(), AUTHOR_ID);
-		validatePositive(request.authorId(), AUTHOR_ID);
+		validateNotNull(request.getAuthorId(), AUTHOR_ID);
+		validatePositive(request.getAuthorId(), AUTHOR_ID);
 	}
 }
