@@ -3,7 +3,7 @@ package com.mjc.school.service.dto;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
-public class NewsDTO {
+public class NewsResponseDTO {
 
 	private Long id;
 	private String title;
@@ -12,11 +12,11 @@ public class NewsDTO {
 	private LocalDateTime lastUpdateDate;
 	private Long authorId;
 
-	public NewsDTO() {
+	public NewsResponseDTO() {
 		// Empty. Used by modelMapper.
 	}
 
-	public NewsDTO(
+	public NewsResponseDTO(
 		final Long id,
 		final String title,
 		final String content,
@@ -100,23 +100,23 @@ public class NewsDTO {
 		if (o == null || getClass() != o.getClass()) {
 			return false;
 		}
-		final NewsDTO newsDTO = (NewsDTO) o;
-		if (!Objects.equals(id, newsDTO.id)) {
+		final NewsResponseDTO newsResponseDTO = (NewsResponseDTO) o;
+		if (!Objects.equals(id, newsResponseDTO.id)) {
 			return false;
 		}
-		if (!Objects.equals(title, newsDTO.title)) {
+		if (!Objects.equals(title, newsResponseDTO.title)) {
 			return false;
 		}
-		if (!Objects.equals(content, newsDTO.content)) {
+		if (!Objects.equals(content, newsResponseDTO.content)) {
 			return false;
 		}
-		if (!Objects.equals(createDate, newsDTO.createDate)) {
+		if (!Objects.equals(createDate, newsResponseDTO.createDate)) {
 			return false;
 		}
-		if (!Objects.equals(lastUpdateDate, newsDTO.lastUpdateDate)) {
+		if (!Objects.equals(lastUpdateDate, newsResponseDTO.lastUpdateDate)) {
 			return false;
 		}
-		return Objects.equals(authorId, newsDTO.authorId);
+		return Objects.equals(authorId, newsResponseDTO.authorId);
 	}
 
 	@Override
