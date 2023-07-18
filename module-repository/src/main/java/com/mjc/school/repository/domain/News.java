@@ -11,6 +11,10 @@ public class News extends BaseEntity {
 	private LocalDateTime lastUpdateDate;
 	private Long authorId;
 
+	public News() {
+		super();
+	}
+
 	public News(
 		final Long id,
 		final String title,

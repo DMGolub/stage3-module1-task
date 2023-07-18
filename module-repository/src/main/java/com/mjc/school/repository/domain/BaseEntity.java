@@ -6,6 +6,10 @@ public class BaseEntity {
 
 	private Long id;
 
+	public BaseEntity() {
+		/* empty */
+	}
+
 	public BaseEntity(final Long id) {
 		this.id = id;
 	}
