@@ -16,7 +16,7 @@ public class AuthorGetAllCommand extends Command<AuthorRequestDTO, AuthorRespons
 
 	@Override
 	public void execute() {
-		List<AuthorResponseDTO> authors = controller.getAll();
+		List<AuthorResponseDTO> authors = controller.readAll();
 		System.out.println(WELCOME_MESSAGE);
 		authors.forEach(a -> System.out.println(a.getName() + ", id=" + a.getId()));
 	}

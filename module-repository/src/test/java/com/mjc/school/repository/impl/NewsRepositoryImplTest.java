@@ -23,10 +23,10 @@ class NewsRepositoryImplTest {
 	private final DataSource dataSource = Mockito.mock(DataSource.class);
 
 	@Nested
-	class TestSave {
+	class TestCreate {
 
 		@Test
-		void save_shouldSaveNewsAndReturnNewsWithId1_whenStorageIsEmpty() {
+		void create_shouldSaveNewsAndReturnNewsWithId1_whenStorageIsEmpty() {
 			final List<NewsModel> storage = new ArrayList<>();
 			when(dataSource.getNews()).thenReturn(storage);
 
@@ -39,7 +39,7 @@ class NewsRepositoryImplTest {
 		}
 
 		@Test
-		void save_shouldSaveNewsAndReturnNewsWithId3_whenStorageContainsTwoNews() {
+		void create_shouldSaveNewsAndReturnNewsWithId3_whenStorageContainsTwoNews() {
 			final List<NewsModel> storage = new ArrayList<>();
 			storage.add(createTestNews(1L));
 			storage.add(createTestNews(2L));
@@ -54,7 +54,7 @@ class NewsRepositoryImplTest {
 		}
 
 		@Test
-		void save_shouldSaveNewsAndReturnNewsWithId4_whenStorageContainsTwoNewsWithId12And5() {
+		void create_shouldSaveNewsAndReturnNewsWithId4_whenStorageContainsTwoNewsWithId12And5() {
 			final List<NewsModel> storage = new ArrayList<>();
 			storage.add(createTestNews(12L));
 			storage.add(createTestNews(15L));
@@ -70,10 +70,10 @@ class NewsRepositoryImplTest {
 	}
 
 	@Nested
-	class TestGetById {
+	class TestReadById {
 
 		@Test
-		void getById_shouldReturnNull_whenNewsNotFound() {
+		void readById_shouldReturnNull_whenNewsNotFound() {
 			final List<NewsModel> storage = Arrays.asList(
 				createTestNews(1L),
 				createTestNews(2L)
@@ -87,7 +87,7 @@ class NewsRepositoryImplTest {
 		}
 
 		@Test
-		void getById_shouldReturnEntity_whenNewsWithGivenIdExists() {
+		void readById_shouldReturnEntity_whenNewsWithGivenIdExists() {
 			final long id = 2L;
 			final NewsModel expected = createTestNews(id);
 			final List<NewsModel> storage = Arrays.asList(createTestNews(1L), expected);
@@ -101,10 +101,10 @@ class NewsRepositoryImplTest {
 	}
 
 	@Nested
-	class TestGetAll {
+	class TestReadAll {
 
 		@Test
-		void getAll_shouldReturnEmptyList_whenStorageIsEmpty() {
+		void readAll_shouldReturnEmptyList_whenStorageIsEmpty() {
 			NewsRepository repository = new NewsRepositoryImpl(dataSource);
 			when(dataSource.getNews()).thenReturn(Collections.emptyList());
 
@@ -113,7 +113,7 @@ class NewsRepositoryImplTest {
 		}
 
 		@Test
-		void getAll_shouldReturnTwoEntities_whenThereAreTwoNewsInTheStorage() {
+		void readAll_shouldReturnTwoEntities_whenThereAreTwoNewsInTheStorage() {
 			final List<NewsModel> storage = Arrays.asList(
 				createTestNews(1L),
 				createTestNews(2L)

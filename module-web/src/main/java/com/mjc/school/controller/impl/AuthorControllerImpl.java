@@ -23,17 +23,17 @@ public class AuthorControllerImpl implements AuthorController {
 	}
 
 	@Override
-	public AuthorResponseDTO save(final AuthorRequestDTO authorRequestDTO) {
+	public AuthorResponseDTO create(final AuthorRequestDTO authorRequestDTO) {
 		throw new UnsupportedOperationException(UNSUPPORTED_MESSAGE);
 	}
 
 	@Override
-	public List<AuthorResponseDTO> getAll() {
-		return authorService.getAll();
+	public List<AuthorResponseDTO> readAll() {
+		return authorService.readAll();
 	}
 
 	@Override
-	public AuthorResponseDTO getById(final Long id) {
+	public AuthorResponseDTO readById(final Long id) {
 		throw new UnsupportedOperationException(UNSUPPORTED_MESSAGE);
 	}
 
@@ -43,7 +43,7 @@ public class AuthorControllerImpl implements AuthorController {
 	}
 
 	@Override
-	public boolean delete(final Long id) {
+	public Boolean delete(final Long id) {
 		throw new UnsupportedOperationException(UNSUPPORTED_MESSAGE);
 	}
 }

@@ -14,7 +14,7 @@ public interface Service<T, R> {
 	 * @return R entity DTO with updated id.
 	 * @throws ValidationException if there is any constraint violation.
 	 */
-	R save(final T t) throws ValidationException;
+	R create(final T t) throws ValidationException;
 
 	/**
 	 * Finds an entity with provided id and converts to DTO.
@@ -24,14 +24,14 @@ public interface Service<T, R> {
 	 * @throws EntityNotFoundException if entity is not found by id,
 	 * 		ValidationException if id violates positive constraint.
 	 */
-	R getById(final long id) throws EntityNotFoundException, ValidationException;
+	R readById(final Long id) throws EntityNotFoundException, ValidationException;
 
 	/**
 	 * Finds all entities.
 	 *
 	 * @return List of entity DTO found or an empty list.
 	 */
-	List<R> getAll();
+	List<R> readAll();
 
 	/**
 	 * Updates entity for provided DTO.
@@ -41,7 +41,7 @@ public interface Service<T, R> {
 	 * @throws EntityNotFoundException if entity is not found by id,
 	 * 		ValidationException if there is any constraint violation.
 	 */
-	R update(T t) throws EntityNotFoundException, ValidationException;
+	R update(final T t) throws EntityNotFoundException, ValidationException;
 
 	/**
 	 * Removes an entity by given id.
@@ -50,5 +50,5 @@ public interface Service<T, R> {
 	 * @return true if entity was removed and false otherwise.
 	 * @throws ValidationException if id violates positive constraint.
 	 */
-	boolean delete(long id) throws ValidationException;
+	Boolean delete(final Long id) throws ValidationException;
 }

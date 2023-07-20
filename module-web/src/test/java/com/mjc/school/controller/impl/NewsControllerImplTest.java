@@ -18,23 +18,23 @@ class NewsControllerImplTest {
 	void save_shouldInvokeServiceSaveMethod_whenInvoked() {
 		final NewsRequestDTO request = new NewsRequestDTO(null, "Title", "Content", 1L);
 
-		newsController.save(request);
-		verify(newsService, times(1)).save(request);
+		newsController.create(request);
+		verify(newsService, times(1)).create(request);
 	}
 
 	@Test
 	void getAll_shouldInvokeServiceGetAllMethod_whenInvoked() {
-		newsController.getAll();
-		verify(newsService, times(1)).getAll();
+		newsController.readAll();
+		verify(newsService, times(1)).readAll();
 	}
 
 	@Test
 	void getById_shouldInvokeServiceGetByIdMethod_whenInvoked() {
 		final long id = 1L;
 
-		newsController.getById(id);
+		newsController.readById(id);
 
-		verify(newsService, times(1)).getById(id);
+		verify(newsService, times(1)).readById(id);
 	}
 
 	@Test

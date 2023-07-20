@@ -21,18 +21,18 @@ public class NewsControllerImpl implements NewsController {
 	}
 
 	@Override
-	public NewsResponseDTO save(final NewsRequestDTO request) {
-		return newsService.save(request);
+	public NewsResponseDTO create(final NewsRequestDTO request) {
+		return newsService.create(request);
 	}
 
 	@Override
-	public List<NewsResponseDTO> getAll() {
-		return newsService.getAll();
+	public List<NewsResponseDTO> readAll() {
+		return newsService.readAll();
 	}
 
 	@Override
-	public NewsResponseDTO getById(final Long id) {
-		return newsService.getById(id);
+	public NewsResponseDTO readById(final Long id) {
+		return newsService.readById(id);
 	}
 
 	@Override
@@ -41,7 +41,7 @@ public class NewsControllerImpl implements NewsController {
 	}
 
 	@Override
-	public boolean delete(final Long id) {
+	public Boolean delete(final Long id) {
 		return newsService.delete(id);
 	}
 }

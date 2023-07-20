@@ -26,20 +26,20 @@ class AuthorServiceImplTest {
 		new AuthorServiceImpl(authorRepository);
 
 	@Nested
-	class TestGetAll {
+	class TesReadAll {
 
 		@Test
-		void getAll_shouldReturnEmptyDTOList_whenRepositoryReturnsEmptyList() {
+		void readAll_shouldReturnEmptyDTOList_whenRepositoryReturnsEmptyList() {
 			when(authorRepository.readAll()).thenReturn(new ArrayList<>());
 
 			List<AuthorResponseDTO> expected = new ArrayList<>();
 
-			assertEquals(expected, authorService.getAll());
+			assertEquals(expected, authorService.readAll());
 			verify(authorRepository, times(1)).readAll();
 		}
 
 		@Test
-		void getAll_shouldReturnTwoDTO_whenRepositoryReturnsTwoEntities() {
+		void readAll_shouldReturnTwoDTO_whenRepositoryReturnsTwoEntities() {
 			final List<AuthorModel> allAuthors = Arrays.asList(
 				createTestAuthor(1L),
 				createTestAuthor(2L)
@@ -48,7 +48,7 @@ class AuthorServiceImplTest {
 
 			List<AuthorResponseDTO> expected = authorListToAuthorDTOList(allAuthors);
 
-			assertEquals(expected, authorService.getAll());
+			assertEquals(expected, authorService.readAll());
 			verify(authorRepository, times(1)).readAll();
 		}
 	}

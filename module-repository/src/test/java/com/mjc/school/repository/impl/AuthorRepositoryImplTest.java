@@ -22,10 +22,10 @@ class AuthorRepositoryImplTest {
 	private final DataSource dataSource = Mockito.mock(DataSource.class);
 
 	@Nested
-	class TestGetAll {
+	class TestReadAll {
 
 		@Test
-		void getAll_shouldReturnEmptyList_whenStorageIsEmpty() {
+		void readAll_shouldReturnEmptyList_whenStorageIsEmpty() {
 			AuthorRepository repository = new AuthorRepositoryImpl(dataSource);
 			when(dataSource.getAuthors()).thenReturn(Collections.emptyList());
 
@@ -34,7 +34,7 @@ class AuthorRepositoryImplTest {
 		}
 
 		@Test
-		void getAll_shouldReturnTwoEntities_whenThereAreTwoNewsInTheStorage() {
+		void readAll_shouldReturnTwoEntities_whenThereAreTwoNewsInTheStorage() {
 			final List<AuthorModel> storage = Arrays.asList(
 				createTestAuthor(1L),
 				createTestAuthor(2L)

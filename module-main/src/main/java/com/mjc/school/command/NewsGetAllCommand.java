@@ -17,7 +17,7 @@ public class NewsGetAllCommand extends Command<NewsRequestDTO, NewsResponseDTO> 
 	@Override
 	public void execute() {
 		System.out.println(WELCOME_MESSAGE);
-		List<NewsResponseDTO> news = controller.getAll();
+		List<NewsResponseDTO> news = controller.readAll();
 		news.forEach(System.out::println);
 	}
 }

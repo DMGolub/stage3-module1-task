@@ -15,7 +15,7 @@ class AuthorControllerImplTest {
 
 	@Test
 	void getAll_shouldInvokeServiceGetAllMethod_whenInvoked() {
-		authorController.getAll();
-		verify(authorService, times(1)).getAll();
+		authorController.readAll();
+		verify(authorService, times(1)).readAll();
 	}
 }

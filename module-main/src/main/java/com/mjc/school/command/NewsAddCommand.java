@@ -20,7 +20,7 @@ public class NewsAddCommand extends Command<NewsRequestDTO, NewsResponseDTO> {
 	public void execute() {
 		try {
 			NewsRequestDTO newNews = NewsRequestInteractiveReader.read(null);
-			controller.save(newNews);
+			controller.create(newNews);
 			System.out.println(SUCCESS_MESSAGE);
 		} catch (EntityNotFoundException | ValidationException e) {
 			System.out.println(ERROR_MESSAGE + e.getMessage());

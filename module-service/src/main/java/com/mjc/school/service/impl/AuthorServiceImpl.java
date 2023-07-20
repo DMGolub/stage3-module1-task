@@ -28,17 +28,17 @@ public class AuthorServiceImpl implements AuthorService {
 	}
 
 	@Override
-	public AuthorResponseDTO save(final AuthorRequestDTO authorRequestDTO) throws ValidationException {
+	public AuthorResponseDTO create(final AuthorRequestDTO authorRequestDTO) throws ValidationException {
 		throw new UnsupportedOperationException(UNSUPPORTED_MESSAGE);
 	}
 
 	@Override
-	public AuthorResponseDTO getById(final long id) throws EntityNotFoundException, ValidationException {
+	public AuthorResponseDTO readById(final Long id) throws EntityNotFoundException, ValidationException {
 		throw new UnsupportedOperationException(UNSUPPORTED_MESSAGE);
 	}
 
 	@Override
-	public List<AuthorResponseDTO> getAll() {
+	public List<AuthorResponseDTO> readAll() {
 		List<AuthorModel> allAuthors = authorRepository.readAll();
 		return allAuthors.stream()
 			.map(mapper::convertEntityToResponseDto)
@@ -52,7 +52,7 @@ public class AuthorServiceImpl implements AuthorService {
 	}
 
 	@Override
-	public boolean delete(final long id) throws ValidationException {
+	public Boolean delete(final Long id) throws ValidationException {
 		throw new UnsupportedOperationException(UNSUPPORTED_MESSAGE);
 	}
 }

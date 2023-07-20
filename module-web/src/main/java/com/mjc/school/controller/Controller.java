@@ -4,13 +4,13 @@ import java.util.List;
 
 public interface Controller<T, R> {
 
-	R save(T t);
+	R create(final T t);
 
-	List<R> getAll();
+	List<R> readAll();
 
-	R getById(Long id);
+	R readById(final Long id);
 
-	R update(T t);
+	R update(final T t);
 
-	boolean delete(Long id);
+	Boolean delete(final Long id);
 }

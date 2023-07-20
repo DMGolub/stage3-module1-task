@@ -19,7 +19,7 @@ public class NewsGetByIdCommand extends Command<NewsRequestDTO, NewsResponseDTO>
 	public void execute() {
 		final Long id = ConsoleReader.readPositiveLong(WELCOME_MESSAGE);
 		try {
-			NewsResponseDTO news = controller.getById(id);
+			NewsResponseDTO news = controller.readById(id);
 			System.out.println(news);
 		} catch (EntityNotFoundException e) {
 			System.out.println(ERROR_MESSAGE + e.getMessage());

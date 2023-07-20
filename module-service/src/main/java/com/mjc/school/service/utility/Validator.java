@@ -13,30 +13,39 @@ public class Validator {
 	private static final int NEWS_CONTENT_MIN_LENGTH = 5;
 	private static final int NEWS_CONTENT_MAX_LENGTH = 255;
 
+	private static Validator instance;
+
 	private Validator() {
-		// Empty. Hiding default public constructor.
+		// empty
 	}
 
-	public static void validatePositive(long number, String name) {
+	public static Validator getInstance() {
+		if (instance == null) {
+			instance = new Validator();
+		}
+		return instance;
+	}
+
+	public void validatePositive(long number, String name) {
 		if (number < 1) {
 			throw new ValidationException(String.format("%s must be positive", name));
 		}
 	}
 
-	public static void validateNotNull(Object obj, String name) {
+	public void validateNotNull(Object obj, String name) {
 		if (obj == null) {
 			throw new ValidationException(String.format("%s can not be null", name));
 		}
 	}
 
-	public static void validateRange(int number, String name, int rangeBegin, int rangeEnd) {
+	public void validateRange(int number, String name, int rangeBegin, int rangeEnd) {
 		if (number < rangeBegin || number > rangeEnd) {
 			throw new ValidationException(
 				String.format("%s value must be from %d to %d", name, rangeBegin, rangeEnd));
 		}
 	}
 
-	public static void validateNewsRequestDTO(NewsRequestDTO request) {
+	public void validateNewsRequestDTO(NewsRequestDTO request) {
 		validateRange(
 			request.getTitle().length(),
 			NEWS_TITLE_NAME,
