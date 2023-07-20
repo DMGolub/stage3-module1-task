@@ -6,7 +6,6 @@ import com.mjc.school.repository.utility.DataSource;
 import com.mjc.school.repository.utility.Utilities;
 
 import java.util.List;
-import java.util.Optional;
 
 public class NewsRepositoryImpl implements NewsRepository {
 
@@ -29,11 +28,11 @@ public class NewsRepositoryImpl implements NewsRepository {
 	}
 
 	@Override
-	public Optional<NewsModel> readById(final long id) {
+	public NewsModel readById(final long id) {
 		final List<NewsModel> allNews = dataSource.getNews();
 		return allNews.stream()
 			.filter(n -> n.getId().equals(id))
-			.findFirst();
+			.findFirst().orElse(null);
 	}
 
 	@Override
@@ -42,14 +41,14 @@ public class NewsRepositoryImpl implements NewsRepository {
 	}
 
 	@Override
-	public Optional<NewsModel> update(final NewsModel news) {
+	public NewsModel update(final NewsModel news) {
 		final List<NewsModel> allNews = dataSource.getNews();
 		int index = Utilities.getIndexById(allNews, news.getId());
 		if (index != -1) {
 			allNews.set(index, news);
-			return Optional.of(news);
+			return news;
 		} else {
-			return Optional.empty();
+			return null;
 		}
 	}
 

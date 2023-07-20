@@ -5,7 +5,6 @@ import com.mjc.school.repository.domain.AuthorModel;
 import com.mjc.school.repository.utility.DataSource;
 
 import java.util.List;
-import java.util.Optional;
 
 public class AuthorRepositoryImpl implements AuthorRepository {
 
@@ -26,7 +25,7 @@ public class AuthorRepositoryImpl implements AuthorRepository {
 	}
 
 	@Override
-	public Optional<AuthorModel> readById(final long id) {
+	public AuthorModel readById(final long id) {
 		throw new UnsupportedOperationException(UNSUPPORTED_MESSAGE);
 	}
 
@@ -36,7 +35,7 @@ public class AuthorRepositoryImpl implements AuthorRepository {
 	}
 
 	@Override
-	public Optional<AuthorModel> update(final AuthorModel author) {
+	public AuthorModel update(final AuthorModel author) {
 		throw new UnsupportedOperationException(UNSUPPORTED_MESSAGE);
 	}
 

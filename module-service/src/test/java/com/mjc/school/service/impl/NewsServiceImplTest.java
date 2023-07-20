@@ -16,7 +16,6 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -170,7 +169,7 @@ class NewsServiceImplTest {
 		@Test
 		void getById_shouldThrowEntityNotFoundException_whenThereIsNoEntityWithGivenId() {
 			final long id = 99L;
-			when(newsRepository.readById(id)).thenReturn(Optional.empty());
+			when(newsRepository.readById(id)).thenReturn(null);
 
 			assertThrows(EntityNotFoundException.class, () -> newsService.getById(id));
 			verify(newsRepository, times(1)).readById(id);
@@ -180,7 +179,7 @@ class NewsServiceImplTest {
 		void getById_shouldReturnDTO_whenEntityWithGivenIdIsFound() {
 			final long id = 2L;
 			final NewsModel toBeFound = createTestNews(id);
-			when(newsRepository.readById(id)).thenReturn(Optional.of(toBeFound));
+			when(newsRepository.readById(id)).thenReturn(toBeFound);
 
 			NewsResponseDTO expected = newsToDTO(toBeFound);
 
@@ -256,7 +255,7 @@ class NewsServiceImplTest {
 			final long id = 99;
 			NewsRequestDTO request = crateTestRequest(id);
 			when(authorRepository.isPresent(request.getAuthorId())).thenReturn(true);
-			when(newsRepository.readById(id)).thenReturn(Optional.empty());
+			when(newsRepository.readById(id)).thenReturn(null);
 
 			assertThrows(EntityNotFoundException.class, () -> newsService.update(request));
 			verify(authorRepository, times(1)).isPresent(request.getAuthorId());
@@ -358,8 +357,8 @@ class NewsServiceImplTest {
 				2L
 			);
 			when(authorRepository.isPresent(request.getAuthorId())).thenReturn(true);
-			when(newsRepository.readById(id)).thenReturn(Optional.of(previous));
-			when(newsRepository.update(any())).thenReturn(Optional.of(updated));
+			when(newsRepository.readById(id)).thenReturn(previous);
+			when(newsRepository.update(any())).thenReturn(updated);
 
 			NewsResponseDTO response = newsService.update(request);
 

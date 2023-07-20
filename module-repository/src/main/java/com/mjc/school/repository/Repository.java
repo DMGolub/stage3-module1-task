@@ -1,7 +1,6 @@
 package com.mjc.school.repository;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface Repository<T> {
 
@@ -17,9 +16,9 @@ public interface Repository<T> {
 	 * Finds an entity with provided id in the data storage.
 	 *
 	 * @param id long entity id, should be positive.
-	 * @return Optional<T> if entity is found and empty Optional otherwise.
+	 * @return T if entity is found and null otherwise.
 	 */
-	Optional<T> readById(final long id);
+	T readById(final long id);
 
 	/**
 	 * Finds all entities in the data storage.
@@ -32,9 +31,9 @@ public interface Repository<T> {
 	 * Updates provided entity in the data storage if the entity is found by id.
 	 *
 	 * @param t T entity to be updated.
-	 * @return Optional<T> with updated entity of empty Optional if entity is not found.
+	 * @return T with updated entity of null if entity is not found.
 	 */
-	Optional<T> update(T t);
+	T update(T t);
 
 	/**
 	 * Removes an entity from the data storage by given id.

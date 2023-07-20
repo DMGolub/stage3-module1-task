@@ -12,7 +12,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.times;
@@ -74,7 +73,7 @@ class NewsRepositoryImplTest {
 	class TestGetById {
 
 		@Test
-		void getById_shouldReturnEmptyOptional_whenNewsNotFound() {
+		void getById_shouldReturnNull_whenNewsNotFound() {
 			final List<NewsModel> storage = Arrays.asList(
 				createTestNews(1L),
 				createTestNews(2L)
@@ -83,7 +82,7 @@ class NewsRepositoryImplTest {
 
 			NewsRepository repository = new NewsRepositoryImpl(dataSource);
 
-			assertEquals(Optional.empty(), repository.readById(3L));
+			assertNull(repository.readById(3L));
 			verify(dataSource, times(1)).getNews();
 		}
 
@@ -96,7 +95,7 @@ class NewsRepositoryImplTest {
 
 			NewsRepository repository = new NewsRepositoryImpl(dataSource);
 
-			assertEquals(Optional.of(expected), repository.readById(id));
+			assertEquals(expected, repository.readById(id));
 			verify(dataSource, times(1)).getNews();
 		}
 	}
@@ -132,7 +131,7 @@ class NewsRepositoryImplTest {
 	class TestUpdate {
 
 		@Test
-		void update_shouldReturnEmptyOptional_whenNewsWithGivenIdNotFound() {
+		void update_shouldReturnNull_whenNewsWithGivenIdNotFound() {
 			final List<NewsModel> storage = new ArrayList<>();
 			storage.add(createTestNews(1L));
 			storage.add(createTestNews(2L));
@@ -141,7 +140,7 @@ class NewsRepositoryImplTest {
 			NewsRepository repository = new NewsRepositoryImpl(dataSource);
 			NewsModel updated = createTestNews(99L);
 
-			assertEquals(Optional.empty(), repository.update(updated));
+			assertNull(repository.update(updated));
 			verify(dataSource, times(1)).getNews();
 		}
 
@@ -159,7 +158,7 @@ class NewsRepositoryImplTest {
 			updated.setAuthorId(2L);
 			List<NewsModel> expected = Arrays.asList(createTestNews(1L), updated);
 
-			assertEquals(Optional.of(updated), repository.update(updated));
+			assertEquals(updated, repository.update(updated));
 			assertEquals(expected, storage);
 			verify(dataSource, times(1)).getNews();
 		}

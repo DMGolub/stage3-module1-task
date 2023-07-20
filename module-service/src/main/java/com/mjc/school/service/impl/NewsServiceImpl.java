@@ -51,8 +51,10 @@ public class NewsServiceImpl implements NewsService {
 	@Override
 	public NewsResponseDTO getById(final long id) throws EntityNotFoundException, ValidationException {
 		Validator.validatePositive(id, NEWS_ID_NAME);
-		NewsModel news = newsRepository.readById(id)
-			.orElseThrow(() -> new EntityNotFoundException("Can not find news by id: " + id));
+		NewsModel news = newsRepository.readById(id);
+		if (news == null) {
+			throw new EntityNotFoundException("Can not find news by id: " + id);
+		}
 		return mapper.convertEntityToResponseDto(news);
 	}
 
@@ -71,13 +73,15 @@ public class NewsServiceImpl implements NewsService {
 		Validator.validateNotNull(id, NEWS_ID_NAME);
 		Validator.validatePositive(id, NEWS_ID_NAME);
 		checkAuthorExists(request.getAuthorId());
-		final NewsModel news = newsRepository.readById(id).orElseThrow(
-			() -> new EntityNotFoundException("Can not find news by id = " + id));
+		final NewsModel news = newsRepository.readById(id);
+		if (news == null) {
+			throw new EntityNotFoundException("Can not find news by id = " + id);
+		}
 		news.setTitle(request.getTitle());
 		news.setContent(request.getContent());
 		news.setLastUpdateDate(LocalDateTime.now());
 		news.setAuthorId(request.getAuthorId());
-		return mapper.convertEntityToResponseDto(newsRepository.update(news).orElse(null));
+		return mapper.convertEntityToResponseDto(newsRepository.update(news));
 	}
 
 	private void checkAuthorExists(final Long authorId) {
