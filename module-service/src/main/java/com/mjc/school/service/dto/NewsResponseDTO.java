@@ -1,6 +1,7 @@
 package com.mjc.school.service.dto;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 
 public class NewsResponseDTO {
@@ -86,8 +87,8 @@ public class NewsResponseDTO {
 			"id=" + id +
 			", title='" + title + '\'' +
 			", content='" + content + '\'' +
-			", createDate=" + createDate +
-			", lastUpdateDate=" + lastUpdateDate +
+			", createDate=" + createDate.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME) +
+			", lastUpdateDate=" + lastUpdateDate.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME) +
 			", authorId=" + authorId +
 			'}';
 	}

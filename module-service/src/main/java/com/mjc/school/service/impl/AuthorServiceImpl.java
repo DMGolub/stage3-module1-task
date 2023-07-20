@@ -2,6 +2,7 @@ package com.mjc.school.service.impl;
 
 import com.mjc.school.repository.AuthorRepository;
 import com.mjc.school.repository.domain.Author;
+import com.mjc.school.repository.impl.AuthorRepositoryImpl;
 import com.mjc.school.service.AuthorService;
 import com.mjc.school.service.dto.AuthorRequestDTO;
 import com.mjc.school.service.dto.AuthorResponseDTO;
@@ -16,6 +17,10 @@ public class AuthorServiceImpl implements AuthorService {
 	private static final String UNSUPPORTED_MESSAGE = "Operation is not implemented yet";
 	private final AuthorRepository authorRepository;
 	private final Mapper mapper;
+
+	public AuthorServiceImpl() {
+		this(new AuthorRepositoryImpl());
+	}
 
 	public AuthorServiceImpl(final AuthorRepository authorRepository) {
 		this.authorRepository = authorRepository;

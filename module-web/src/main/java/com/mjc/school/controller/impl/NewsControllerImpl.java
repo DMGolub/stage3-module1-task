@@ -4,12 +4,17 @@ import com.mjc.school.controller.NewsController;
 import com.mjc.school.service.NewsService;
 import com.mjc.school.service.dto.NewsRequestDTO;
 import com.mjc.school.service.dto.NewsResponseDTO;
+import com.mjc.school.service.impl.NewsServiceImpl;
 
 import java.util.List;
 
 public class NewsControllerImpl implements NewsController {
 
 	private final NewsService newsService;
+
+	public NewsControllerImpl() {
+		this(new NewsServiceImpl());
+	}
 
 	public NewsControllerImpl(NewsService newsService) {
 		this.newsService = newsService;
