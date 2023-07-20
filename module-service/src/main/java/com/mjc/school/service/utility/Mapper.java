@@ -1,7 +1,7 @@
 package com.mjc.school.service.utility;
 
-import com.mjc.school.repository.domain.Author;
-import com.mjc.school.repository.domain.News;
+import com.mjc.school.repository.domain.AuthorModel;
+import com.mjc.school.repository.domain.NewsModel;
 import com.mjc.school.service.dto.AuthorResponseDTO;
 import com.mjc.school.service.dto.NewsRequestDTO;
 import com.mjc.school.service.dto.NewsResponseDTO;
@@ -24,15 +24,15 @@ public class Mapper {
 		return instance;
 	}
 
-	public NewsResponseDTO convertEntityToResponseDto(final News news) {
+	public NewsResponseDTO convertEntityToResponseDto(final NewsModel news) {
 		return modelMapper.map(news, NewsResponseDTO.class);
 	}
 
-	public AuthorResponseDTO convertEntityToResponseDto(final Author author) {
+	public AuthorResponseDTO convertEntityToResponseDto(final AuthorModel author) {
 		return modelMapper.map(author, AuthorResponseDTO.class);
 	}
 
-	public News convertRequestDtoToEntity(final NewsRequestDTO request) {
-		return modelMapper.map(request, News.class);
+	public NewsModel convertRequestDtoToEntity(final NewsRequestDTO request) {
+		return modelMapper.map(request, NewsModel.class);
 	}
 }

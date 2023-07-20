@@ -2,7 +2,7 @@ package com.mjc.school.service.impl;
 
 import com.mjc.school.repository.AuthorRepository;
 import com.mjc.school.repository.NewsRepository;
-import com.mjc.school.repository.domain.News;
+import com.mjc.school.repository.domain.NewsModel;
 import com.mjc.school.repository.impl.AuthorRepositoryImpl;
 import com.mjc.school.repository.impl.NewsRepositoryImpl;
 import com.mjc.school.service.NewsService;
@@ -41,24 +41,24 @@ public class NewsServiceImpl implements NewsService {
 	public NewsResponseDTO save(final NewsRequestDTO request) throws EntityNotFoundException, ValidationException {
 		Validator.validateNewsRequestDTO(request);
 		checkAuthorExists(request.getAuthorId());
-		final News news = mapper.convertRequestDtoToEntity(request);
+		final NewsModel news = mapper.convertRequestDtoToEntity(request);
 		final LocalDateTime now = LocalDateTime.now();
 		news.setCreateDate(now);
 		news.setLastUpdateDate(now);
-		return mapper.convertEntityToResponseDto(newsRepository.save(news));
+		return mapper.convertEntityToResponseDto(newsRepository.create(news));
 	}
 
 	@Override
 	public NewsResponseDTO getById(final long id) throws EntityNotFoundException, ValidationException {
 		Validator.validatePositive(id, NEWS_ID_NAME);
-		News news = newsRepository.getById(id)
+		NewsModel news = newsRepository.readById(id)
 			.orElseThrow(() -> new EntityNotFoundException("Can not find news by id: " + id));
 		return mapper.convertEntityToResponseDto(news);
 	}
 
 	@Override
 	public List<NewsResponseDTO> getAll() {
-		List<News> allNews = newsRepository.getAll();
+		List<NewsModel> allNews = newsRepository.readAll();
 		return allNews.stream()
 			.map(mapper::convertEntityToResponseDto)
 			.toList();
@@ -71,7 +71,7 @@ public class NewsServiceImpl implements NewsService {
 		Validator.validateNotNull(id, NEWS_ID_NAME);
 		Validator.validatePositive(id, NEWS_ID_NAME);
 		checkAuthorExists(request.getAuthorId());
-		final News news = newsRepository.getById(id).orElseThrow(
+		final NewsModel news = newsRepository.readById(id).orElseThrow(
 			() -> new EntityNotFoundException("Can not find news by id = " + id));
 		news.setTitle(request.getTitle());
 		news.setContent(request.getContent());

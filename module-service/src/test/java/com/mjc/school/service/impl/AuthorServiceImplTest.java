@@ -1,7 +1,7 @@
 package com.mjc.school.service.impl;
 
 import com.mjc.school.repository.AuthorRepository;
-import com.mjc.school.repository.domain.Author;
+import com.mjc.school.repository.domain.AuthorModel;
 import com.mjc.school.service.Service;
 import com.mjc.school.service.dto.AuthorRequestDTO;
 import com.mjc.school.service.dto.AuthorResponseDTO;
@@ -30,41 +30,41 @@ class AuthorServiceImplTest {
 
 		@Test
 		void getAll_shouldReturnEmptyDTOList_whenRepositoryReturnsEmptyList() {
-			when(authorRepository.getAll()).thenReturn(new ArrayList<>());
+			when(authorRepository.readAll()).thenReturn(new ArrayList<>());
 
 			List<AuthorResponseDTO> expected = new ArrayList<>();
 
 			assertEquals(expected, authorService.getAll());
-			verify(authorRepository, times(1)).getAll();
+			verify(authorRepository, times(1)).readAll();
 		}
 
 		@Test
 		void getAll_shouldReturnTwoDTO_whenRepositoryReturnsTwoEntities() {
-			final List<Author> allAuthors = Arrays.asList(
+			final List<AuthorModel> allAuthors = Arrays.asList(
 				createTestAuthor(1L),
 				createTestAuthor(2L)
 			);
-			when(authorRepository.getAll()).thenReturn(allAuthors);
+			when(authorRepository.readAll()).thenReturn(allAuthors);
 
 			List<AuthorResponseDTO> expected = authorListToAuthorDTOList(allAuthors);
 
 			assertEquals(expected, authorService.getAll());
-			verify(authorRepository, times(1)).getAll();
+			verify(authorRepository, times(1)).readAll();
 		}
 	}
 
-	private Author createTestAuthor(final long id) {
-		return new Author(id, "Author Name");
+	private AuthorModel createTestAuthor(final long id) {
+		return new AuthorModel(id, "Author Name");
 	}
 
-	private AuthorResponseDTO authorToDTO(Author author) {
+	private AuthorResponseDTO authorToDTO(AuthorModel author) {
 		return new AuthorResponseDTO(
 			author.getId(),
 			author.getName()
 		);
 	}
 
-	private List<AuthorResponseDTO> authorListToAuthorDTOList(List<Author> authors) {
+	private List<AuthorResponseDTO> authorListToAuthorDTOList(List<AuthorModel> authors) {
 		return authors.stream()
 			.map(this::authorToDTO)
 			.collect(Collectors.toList());

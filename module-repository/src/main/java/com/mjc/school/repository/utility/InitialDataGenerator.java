@@ -1,7 +1,7 @@
 package com.mjc.school.repository.utility;
 
-import com.mjc.school.repository.domain.Author;
-import com.mjc.school.repository.domain.News;
+import com.mjc.school.repository.domain.AuthorModel;
+import com.mjc.school.repository.domain.NewsModel;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -24,7 +24,7 @@ public class InitialDataGenerator {
 
 	private final List<String> titles;
 	private final List<String> content;
-	private final List<Author> authors;
+	private final List<AuthorModel> authors;
 	final Random random;
 
 	private InitialDataGenerator() {
@@ -53,15 +53,15 @@ public class InitialDataGenerator {
 		return instance;
 	}
 
-	public List<Author> getAuthors() {
+	public List<AuthorModel> getAuthors() {
 		return authors;
 	}
 
-	public List<News> getNews() {
-		List<News> allNews = new ArrayList<>();
+	public List<NewsModel> getNews() {
+		List<NewsModel> allNews = new ArrayList<>();
 		for (long i = 1; i <= NEWS_AMOUNT; i++) {
 			LocalDateTime date = getRandomDate();
-			allNews.add(new News(
+			allNews.add(new NewsModel(
 				i,								// id
 				getRandomTitle(), 				// title
 				getRandomContent(), 			// content
@@ -73,11 +73,11 @@ public class InitialDataGenerator {
 		return allNews;
 	}
 
-	private List<Author> convertToAuthors(List<String> authors) {
-		List<Author> result = new ArrayList<>();
+	private List<AuthorModel> convertToAuthors(List<String> authors) {
+		List<AuthorModel> result = new ArrayList<>();
 		for (String author : authors) {
 			String[] values = author.split(" ", 2);
-			result.add(new Author(
+			result.add(new AuthorModel(
 				Long.parseLong(values[0]),
 				values[1]
 			));

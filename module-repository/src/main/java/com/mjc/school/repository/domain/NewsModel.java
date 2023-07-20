@@ -3,7 +3,7 @@ package com.mjc.school.repository.domain;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
-public class News extends BaseEntity {
+public class NewsModel extends BaseModel {
 
 	private String title;
 	private String content;
@@ -11,11 +11,11 @@ public class News extends BaseEntity {
 	private LocalDateTime lastUpdateDate;
 	private Long authorId;
 
-	public News() {
+	public NewsModel() {
 		super();
 	}
 
-	public News(
+	public NewsModel(
 		final Long id,
 		final String title,
 		final String content,
@@ -91,7 +91,7 @@ public class News extends BaseEntity {
 		if (o == null || getClass() != o.getClass()) {
 			return false;
 		}
-		final News news = (News) o;
+		final NewsModel news = (NewsModel) o;
 		if (!Objects.equals(getId(), news.getId())) {
 			return false;
 		}

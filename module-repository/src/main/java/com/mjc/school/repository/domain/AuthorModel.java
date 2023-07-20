@@ -2,11 +2,11 @@ package com.mjc.school.repository.domain;
 
 import java.util.Objects;
 
-public class Author extends BaseEntity {
+public class AuthorModel extends BaseModel {
 
 	private String name;
 
-	public Author(final Long id, final String name) {
+	public AuthorModel(final Long id, final String name) {
 		super(id);
 		this.name = name;
 	}
@@ -33,7 +33,7 @@ public class Author extends BaseEntity {
 		if (o == null || getClass() != o.getClass()) {
 			return false;
 		}
-		final Author author = (Author) o;
+		final AuthorModel author = (AuthorModel) o;
 		if (!Objects.equals(getId(), author.getId())) {
 			return false;
 		}

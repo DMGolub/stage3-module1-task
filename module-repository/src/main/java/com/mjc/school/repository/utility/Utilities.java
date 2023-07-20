@@ -1,6 +1,6 @@
 package com.mjc.school.repository.utility;
 
-import com.mjc.school.repository.domain.BaseEntity;
+import com.mjc.school.repository.domain.BaseModel;
 
 import java.util.Comparator;
 import java.util.List;
@@ -19,7 +19,7 @@ public class Utilities {
 	 * @return int entity index if found and -1 otherwise.
 	 * @param <T> entity class extending BaseEntity.
 	 */
-	public static <T extends BaseEntity> int getIndexById(final List<T> storage, final long id) {
+	public static <T extends BaseModel> int getIndexById(final List<T> storage, final long id) {
 		for (int i = 0; i < storage.size(); i++) {
 			if (storage.get(i) != null && storage.get(i).getId().equals(id)) {
 				return i;
@@ -35,9 +35,9 @@ public class Utilities {
 	 * @return long maximum id if found and 0 otherwise.
 	 * @param <T> entity class extending BaseEntity.
 	 */
-	public static <T extends BaseEntity> long getMaxId(final List<T> storage) {
+	public static <T extends BaseModel> long getMaxId(final List<T> storage) {
 		return storage.stream()
-			.map(BaseEntity::getId)
+			.map(BaseModel::getId)
 			.max(Comparator.naturalOrder())
 			.orElse(0L);
 	}

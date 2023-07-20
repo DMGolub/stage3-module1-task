@@ -1,7 +1,7 @@
 package com.mjc.school.repository.impl;
 
 import com.mjc.school.repository.AuthorRepository;
-import com.mjc.school.repository.domain.Author;
+import com.mjc.school.repository.domain.AuthorModel;
 import com.mjc.school.repository.utility.DataSource;
 
 import java.util.List;
@@ -21,27 +21,27 @@ public class AuthorRepositoryImpl implements AuthorRepository {
 	}
 
 	@Override
-	public Author save(final Author author) {
+	public AuthorModel create(final AuthorModel author) {
 		throw new UnsupportedOperationException(UNSUPPORTED_MESSAGE);
 	}
 
 	@Override
-	public Optional<Author> getById(final long id) {
+	public Optional<AuthorModel> readById(final long id) {
 		throw new UnsupportedOperationException(UNSUPPORTED_MESSAGE);
 	}
 
 	@Override
-	public List<Author> getAll() {
+	public List<AuthorModel> readAll() {
 		return dataSource.getAuthors();
 	}
 
 	@Override
-	public Optional<Author> update(final Author author) {
+	public Optional<AuthorModel> update(final AuthorModel author) {
 		throw new UnsupportedOperationException(UNSUPPORTED_MESSAGE);
 	}
 
 	@Override
-	public boolean delete(final long id) {
+	public Boolean delete(final long id) {
 		throw new UnsupportedOperationException(UNSUPPORTED_MESSAGE);
 	}
 

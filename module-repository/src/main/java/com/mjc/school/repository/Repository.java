@@ -11,7 +11,7 @@ public interface Repository<T> {
 	 * @param t T entity to be saved.
 	 * @return T entity with updated id.
 	 */
-	T save(final T t);
+	T create(final T t);
 
 	/**
 	 * Finds an entity with provided id in the data storage.
@@ -19,14 +19,14 @@ public interface Repository<T> {
 	 * @param id long entity id, should be positive.
 	 * @return Optional<T> if entity is found and empty Optional otherwise.
 	 */
-	Optional<T> getById(final long id);
+	Optional<T> readById(final long id);
 
 	/**
 	 * Finds all entities in the data storage.
 	 *
 	 * @return List of entities found or an empty list.
 	 */
-	List<T> getAll();
+	List<T> readAll();
 
 	/**
 	 * Updates provided entity in the data storage if the entity is found by id.
@@ -42,5 +42,5 @@ public interface Repository<T> {
 	 * @param id long id of an entity to be removed.
 	 * @return true if entity was removed and false otherwise.
 	 */
-	boolean delete(long id);
+	Boolean delete(long id);
 }

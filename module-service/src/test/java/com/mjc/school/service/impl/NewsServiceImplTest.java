@@ -2,7 +2,7 @@ package com.mjc.school.service.impl;
 
 import com.mjc.school.repository.AuthorRepository;
 import com.mjc.school.repository.NewsRepository;
-import com.mjc.school.repository.domain.News;
+import com.mjc.school.repository.domain.NewsModel;
 import com.mjc.school.service.Service;
 import com.mjc.school.service.dto.NewsResponseDTO;
 import com.mjc.school.service.dto.NewsRequestDTO;
@@ -132,13 +132,13 @@ class NewsServiceImplTest {
 				"Some valid content",
 				authorId
 			);
-			when(newsRepository.save(any())).then(AdditionalAnswers.returnsFirstArg());
+			when(newsRepository.create(any())).then(AdditionalAnswers.returnsFirstArg());
 			when(authorRepository.isPresent(authorId)).thenReturn(true);
 
 			NewsResponseDTO response = newsService.save(request);
 
 			verify(authorRepository, times(1)).isPresent(authorId);
-			verify(newsRepository, times(1)).save(any());
+			verify(newsRepository, times(1)).create(any());
 			assertNotNull(response);
 			assertEquals(request.getTitle(), response.getTitle());
 			assertEquals(request.getContent(), response.getContent());
@@ -170,22 +170,22 @@ class NewsServiceImplTest {
 		@Test
 		void getById_shouldThrowEntityNotFoundException_whenThereIsNoEntityWithGivenId() {
 			final long id = 99L;
-			when(newsRepository.getById(id)).thenReturn(Optional.empty());
+			when(newsRepository.readById(id)).thenReturn(Optional.empty());
 
 			assertThrows(EntityNotFoundException.class, () -> newsService.getById(id));
-			verify(newsRepository, times(1)).getById(id);
+			verify(newsRepository, times(1)).readById(id);
 		}
 
 		@Test
 		void getById_shouldReturnDTO_whenEntityWithGivenIdIsFound() {
 			final long id = 2L;
-			final News toBeFound = createTestNews(id);
-			when(newsRepository.getById(id)).thenReturn(Optional.of(toBeFound));
+			final NewsModel toBeFound = createTestNews(id);
+			when(newsRepository.readById(id)).thenReturn(Optional.of(toBeFound));
 
 			NewsResponseDTO expected = newsToDTO(toBeFound);
 
 			assertEquals(expected, newsService.getById(id));
-			verify(newsRepository, times(1)).getById(id);
+			verify(newsRepository, times(1)).readById(id);
 		}
 	}
 
@@ -194,26 +194,26 @@ class NewsServiceImplTest {
 
 		@Test
 		void getAll_shouldReturnEmptyDTOList_whenRepositoryReturnsEmptyList() {
-			when(newsRepository.getAll()).thenReturn(new ArrayList<>());
+			when(newsRepository.readAll()).thenReturn(new ArrayList<>());
 
 			List<NewsResponseDTO> expected = new ArrayList<>();
 
 			assertEquals(expected, newsService.getAll());
-			verify(newsRepository, times(1)).getAll();
+			verify(newsRepository, times(1)).readAll();
 		}
 
 		@Test
 		void getAll_shouldReturnTwoDTOs_whenRepositoryReturnsTwoEntities() {
-			final List<News> allNews = Arrays.asList(
+			final List<NewsModel> allNews = Arrays.asList(
 				createTestNews(1L),
 				createTestNews(2L)
 			);
-			when(newsRepository.getAll()).thenReturn(allNews);
+			when(newsRepository.readAll()).thenReturn(allNews);
 
 			List<NewsResponseDTO> expected = newsListToNewsDTOList(allNews);
 
 			assertEquals(expected, newsService.getAll());
-			verify(newsRepository, times(1)).getAll();
+			verify(newsRepository, times(1)).readAll();
 		}
 	}
 
@@ -256,11 +256,11 @@ class NewsServiceImplTest {
 			final long id = 99;
 			NewsRequestDTO request = crateTestRequest(id);
 			when(authorRepository.isPresent(request.getAuthorId())).thenReturn(true);
-			when(newsRepository.getById(id)).thenReturn(Optional.empty());
+			when(newsRepository.readById(id)).thenReturn(Optional.empty());
 
 			assertThrows(EntityNotFoundException.class, () -> newsService.update(request));
 			verify(authorRepository, times(1)).isPresent(request.getAuthorId());
-			verify(newsRepository, times(1)).getById(id);
+			verify(newsRepository, times(1)).readById(id);
 		}
 
 		@Test
@@ -341,7 +341,7 @@ class NewsServiceImplTest {
 				"Some updated content",
 				2L
 			);
-			News previous = new News(
+			NewsModel previous = new NewsModel(
 				id,
 				"Some old title",
 				"Some old content",
@@ -349,7 +349,7 @@ class NewsServiceImplTest {
 				LocalDateTime.of(2023, 7, 17, 16, 30, 0),
 				1L
 			);
-			News updated = new News(
+			NewsModel updated = new NewsModel(
 				id,
 				"Some updated title",
 				"Some updated content",
@@ -358,13 +358,13 @@ class NewsServiceImplTest {
 				2L
 			);
 			when(authorRepository.isPresent(request.getAuthorId())).thenReturn(true);
-			when(newsRepository.getById(id)).thenReturn(Optional.of(previous));
+			when(newsRepository.readById(id)).thenReturn(Optional.of(previous));
 			when(newsRepository.update(any())).thenReturn(Optional.of(updated));
 
 			NewsResponseDTO response = newsService.update(request);
 
 			verify(authorRepository, times(1)).isPresent(request.getAuthorId());
-			verify(newsRepository, times(1)).getById(id);
+			verify(newsRepository, times(1)).readById(id);
 			verify(newsRepository, times(1)).update(any());
 			assertNotNull(response);
 			assertEquals(request.getTitle(), response.getTitle());
@@ -412,8 +412,8 @@ class NewsServiceImplTest {
 		}
 	}
 
-	private News createTestNews(Long newsId) {
-		return new News(
+	private NewsModel createTestNews(Long newsId) {
+		return new NewsModel(
 			newsId,
 			"Title",
 			"Content",
@@ -427,7 +427,7 @@ class NewsServiceImplTest {
 		return new NewsRequestDTO(newsId, "Title", "Content", 1L);
 	}
 
-	private NewsResponseDTO newsToDTO(News news) {
+	private NewsResponseDTO newsToDTO(NewsModel news) {
 		return new NewsResponseDTO(
 			news.getId(),
 			news.getTitle(),
@@ -438,7 +438,7 @@ class NewsServiceImplTest {
 		);
 	}
 
-	private List<NewsResponseDTO> newsListToNewsDTOList(List<News> news) {
+	private List<NewsResponseDTO> newsListToNewsDTOList(List<NewsModel> news) {
 		return news.stream()
 			.map(this::newsToDTO)
 			.collect(Collectors.toList());

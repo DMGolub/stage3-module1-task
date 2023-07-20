@@ -1,15 +1,15 @@
 package com.mjc.school.repository.utility;
 
-import com.mjc.school.repository.domain.Author;
-import com.mjc.school.repository.domain.News;
+import com.mjc.school.repository.domain.AuthorModel;
+import com.mjc.school.repository.domain.NewsModel;
 
 import java.util.List;
 
 public class DataSource {
 
 	private static DataSource instance;
-	private final List<Author> authors;
-	private final List<News> news;
+	private final List<AuthorModel> authors;
+	private final List<NewsModel> news;
 
 
 	private DataSource() {
@@ -24,10 +24,10 @@ public class DataSource {
 		return instance;
 	}
 
-	public List<Author> getAuthors() {
+	public List<AuthorModel> getAuthors() {
 		return authors;
 	}
-	public List<News> getNews() {
+	public List<NewsModel> getNews() {
 		return news;
 	}
 }

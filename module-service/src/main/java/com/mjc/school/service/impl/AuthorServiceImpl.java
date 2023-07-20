@@ -1,7 +1,7 @@
 package com.mjc.school.service.impl;
 
 import com.mjc.school.repository.AuthorRepository;
-import com.mjc.school.repository.domain.Author;
+import com.mjc.school.repository.domain.AuthorModel;
 import com.mjc.school.repository.impl.AuthorRepositoryImpl;
 import com.mjc.school.service.AuthorService;
 import com.mjc.school.service.dto.AuthorRequestDTO;
@@ -39,7 +39,7 @@ public class AuthorServiceImpl implements AuthorService {
 
 	@Override
 	public List<AuthorResponseDTO> getAll() {
-		List<Author> allAuthors = authorRepository.getAll();
+		List<AuthorModel> allAuthors = authorRepository.readAll();
 		return allAuthors.stream()
 			.map(mapper::convertEntityToResponseDto)
 			.toList();

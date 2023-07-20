@@ -2,15 +2,15 @@ package com.mjc.school.repository.domain;
 
 import java.util.Objects;
 
-public class BaseEntity {
+public class BaseModel {
 
 	private Long id;
 
-	public BaseEntity() {
+	public BaseModel() {
 		/* empty */
 	}
 
-	public BaseEntity(final Long id) {
+	public BaseModel(final Long id) {
 		this.id = id;
 	}
 
@@ -35,7 +35,7 @@ public class BaseEntity {
 		if (o == null || getClass() != o.getClass()) {
 			return false;
 		}
-		final BaseEntity that = (BaseEntity) o;
+		final BaseModel that = (BaseModel) o;
 		return Objects.equals(id, that.id);
 	}
 

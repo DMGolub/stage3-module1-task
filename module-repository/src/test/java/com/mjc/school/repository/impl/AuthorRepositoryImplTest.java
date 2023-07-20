@@ -1,7 +1,7 @@
 package com.mjc.school.repository.impl;
 
 import com.mjc.school.repository.AuthorRepository;
-import com.mjc.school.repository.domain.Author;
+import com.mjc.school.repository.domain.AuthorModel;
 import com.mjc.school.repository.utility.DataSource;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -29,13 +29,13 @@ class AuthorRepositoryImplTest {
 			AuthorRepository repository = new AuthorRepositoryImpl(dataSource);
 			when(dataSource.getAuthors()).thenReturn(Collections.emptyList());
 
-			assertEquals(Collections.emptyList(), repository.getAll());
+			assertEquals(Collections.emptyList(), repository.readAll());
 			verify(dataSource, times(1)).getAuthors();
 		}
 
 		@Test
 		void getAll_shouldReturnTwoEntities_whenThereAreTwoNewsInTheStorage() {
-			final List<Author> storage = Arrays.asList(
+			final List<AuthorModel> storage = Arrays.asList(
 				createTestAuthor(1L),
 				createTestAuthor(2L)
 			);
@@ -43,7 +43,7 @@ class AuthorRepositoryImplTest {
 
 			AuthorRepository repository = new AuthorRepositoryImpl(dataSource);
 
-			assertEquals(storage, repository.getAll());
+			assertEquals(storage, repository.readAll());
 			verify(dataSource, times(1)).getAuthors();
 		}
 	}
@@ -62,7 +62,7 @@ class AuthorRepositoryImplTest {
 
 		@Test
 		void isPresent_shouldReturnFalse_whenEntityIsNotFound() {
-			final List<Author> storage = Arrays.asList(
+			final List<AuthorModel> storage = Arrays.asList(
 				createTestAuthor(1L),
 				createTestAuthor(2L)
 			);
@@ -75,7 +75,7 @@ class AuthorRepositoryImplTest {
 
 		@Test
 		void isPresent_shouldReturnTrue_whenEntityIsFound() {
-			final List<Author> storage = Arrays.asList(
+			final List<AuthorModel> storage = Arrays.asList(
 				createTestAuthor(1L),
 				createTestAuthor(2L)
 			);
@@ -87,8 +87,8 @@ class AuthorRepositoryImplTest {
 		}
 	}
 
-	private Author createTestAuthor(Long authorId) {
-		return new Author(
+	private AuthorModel createTestAuthor(Long authorId) {
+		return new AuthorModel(
 			authorId,
 			"Author Name"
 		);
