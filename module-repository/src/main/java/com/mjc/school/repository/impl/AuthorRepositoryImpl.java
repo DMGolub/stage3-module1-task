@@ -25,7 +25,7 @@ public class AuthorRepositoryImpl implements AuthorRepository {
 	}
 
 	@Override
-	public AuthorModel readById(final long id) {
+	public AuthorModel readById(final Long id) {
 		throw new UnsupportedOperationException(UNSUPPORTED_MESSAGE);
 	}
 
@@ -40,7 +40,7 @@ public class AuthorRepositoryImpl implements AuthorRepository {
 	}
 
 	@Override
-	public Boolean delete(final long id) {
+	public Boolean delete(final Long id) {
 		throw new UnsupportedOperationException(UNSUPPORTED_MESSAGE);
 	}
 

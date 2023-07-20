@@ -18,7 +18,7 @@ public interface Repository<T> {
 	 * @param id long entity id, should be positive.
 	 * @return T if entity is found and null otherwise.
 	 */
-	T readById(final long id);
+	T readById(final Long id);
 
 	/**
 	 * Finds all entities in the data storage.
@@ -33,7 +33,7 @@ public interface Repository<T> {
 	 * @param t T entity to be updated.
 	 * @return T with updated entity of null if entity is not found.
 	 */
-	T update(T t);
+	T update(final T t);
 
 	/**
 	 * Removes an entity from the data storage by given id.
@@ -41,5 +41,5 @@ public interface Repository<T> {
 	 * @param id long id of an entity to be removed.
 	 * @return true if entity was removed and false otherwise.
 	 */
-	Boolean delete(long id);
+	Boolean delete(final Long id);
 }

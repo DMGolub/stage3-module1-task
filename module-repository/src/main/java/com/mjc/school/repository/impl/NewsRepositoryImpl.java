@@ -28,7 +28,7 @@ public class NewsRepositoryImpl implements NewsRepository {
 	}
 
 	@Override
-	public NewsModel readById(final long id) {
+	public NewsModel readById(final Long id) {
 		final List<NewsModel> allNews = dataSource.getNews();
 		return allNews.stream()
 			.filter(n -> n.getId().equals(id))
@@ -53,7 +53,7 @@ public class NewsRepositoryImpl implements NewsRepository {
 	}
 
 	@Override
-	public Boolean delete(final long id) {
+	public Boolean delete(final Long id) {
 		final List<NewsModel> storage = dataSource.getNews();
 		return storage.removeIf(n -> n.getId().equals(id));
 	}

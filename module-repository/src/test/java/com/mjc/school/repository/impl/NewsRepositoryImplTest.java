@@ -177,7 +177,7 @@ class NewsRepositoryImplTest {
 
 			NewsRepository repository = new NewsRepositoryImpl(dataSource);
 
-			assertFalse(repository.delete(99));
+			assertFalse(repository.delete(99L));
 			verify(dataSource, times(1)).getNews();
 		}
 
@@ -187,7 +187,7 @@ class NewsRepositoryImplTest {
 
 			NewsRepository repository = new NewsRepositoryImpl(dataSource);
 
-			assertFalse(repository.delete(99));
+			assertFalse(repository.delete(99L));
 			verify(dataSource, times(1)).getNews();
 		}
 
