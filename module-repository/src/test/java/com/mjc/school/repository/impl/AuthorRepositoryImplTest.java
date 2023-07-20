@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -44,6 +45,45 @@ class AuthorRepositoryImplTest {
 
 			assertEquals(storage, repository.getAll());
 			verify(dataSource, times(1)).getAuthors();
+		}
+	}
+
+	@Nested
+	class TestIsPresent {
+
+		@Test
+		void isPresent_shouldReturnFalse_whenStorageIsEmpty() {
+			when(dataSource.getAuthors()).thenReturn(new ArrayList<>());
+
+			AuthorRepository repository = new AuthorRepositoryImpl(dataSource);
+
+			assertFalse(repository.isPresent(99L));
+		}
+
+		@Test
+		void isPresent_shouldReturnFalse_whenEntityIsNotFound() {
+			final List<Author> storage = Arrays.asList(
+				createTestAuthor(1L),
+				createTestAuthor(2L)
+			);
+			when(dataSource.getAuthors()).thenReturn(storage);
+
+			AuthorRepository repository = new AuthorRepositoryImpl(dataSource);
+
+			assertFalse(repository.isPresent(99L));
+		}
+
+		@Test
+		void isPresent_shouldReturnTrue_whenEntityIsFound() {
+			final List<Author> storage = Arrays.asList(
+				createTestAuthor(1L),
+				createTestAuthor(2L)
+			);
+			when(dataSource.getAuthors()).thenReturn(storage);
+
+			AuthorRepository repository = new AuthorRepositoryImpl(dataSource);
+
+			assertTrue(repository.isPresent(2L));
 		}
 	}
 

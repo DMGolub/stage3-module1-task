@@ -44,4 +44,9 @@ public class AuthorRepositoryImpl implements AuthorRepository {
 	public boolean delete(final long id) {
 		throw new UnsupportedOperationException(UNSUPPORTED_MESSAGE);
 	}
+
+	@Override
+	public boolean isPresent(final Long id) {
+		return dataSource.getAuthors().stream().anyMatch(a -> a.getId().equals(id));
+	}
 }

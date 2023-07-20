@@ -1,5 +1,6 @@
 package com.mjc.school.service.impl;
 
+import com.mjc.school.repository.AuthorRepository;
 import com.mjc.school.repository.NewsRepository;
 import com.mjc.school.repository.domain.News;
 import com.mjc.school.service.NewsService;
@@ -17,17 +18,23 @@ public class NewsServiceImpl implements NewsService {
 
 	private static final String NEWS_ID_NAME = "news id";
 
+	private final AuthorRepository authorRepository;
 	private final NewsRepository newsRepository;
 	private final Mapper mapper;
 
-	public NewsServiceImpl(final NewsRepository newsRepository) {
+	public NewsServiceImpl(
+		final AuthorRepository authorRepository,
+		final NewsRepository newsRepository
+	) {
+		this.authorRepository = authorRepository;
 		this.newsRepository = newsRepository;
 		this.mapper = Mapper.getInstance();
 	}
 
 	@Override
-	public NewsResponseDTO save(final NewsRequestDTO request) throws ValidationException {
+	public NewsResponseDTO save(final NewsRequestDTO request) throws EntityNotFoundException, ValidationException {
 		Validator.validateNewsRequestDTO(request);
+		checkAuthorExists(request.getAuthorId());
 		final News news = mapper.convertRequestDtoToEntity(request);
 		final LocalDateTime now = LocalDateTime.now();
 		news.setCreateDate(now);
@@ -57,6 +64,7 @@ public class NewsServiceImpl implements NewsService {
 		final Long id = request.getId();
 		Validator.validateNotNull(id, NEWS_ID_NAME);
 		Validator.validatePositive(id, NEWS_ID_NAME);
+		checkAuthorExists(request.getAuthorId());
 		final News news = newsRepository.getById(id).orElseThrow(
 			() -> new EntityNotFoundException("Can not find news by id = " + id));
 		news.setTitle(request.getTitle());
@@ -64,6 +72,12 @@ public class NewsServiceImpl implements NewsService {
 		news.setLastUpdateDate(LocalDateTime.now());
 		news.setAuthorId(request.getAuthorId());
 		return mapper.convertEntityToResponseDto(newsRepository.update(news).orElse(null));
+	}
+
+	private void checkAuthorExists(final Long authorId) {
+		if (!authorRepository.isPresent(authorId)) {
+			throw new EntityNotFoundException("Can not find author by id = " + authorId);
+		}
 	}
 
 	@Override

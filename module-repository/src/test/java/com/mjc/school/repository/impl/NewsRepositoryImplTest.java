@@ -146,7 +146,7 @@ class NewsRepositoryImplTest {
 		}
 
 		@Test
-		void update() {
+		void update_shouldReturnUpdatedEntity_whenEntityIsValid() {
 			final List<News> storage = new ArrayList<>();
 			storage.add(createTestNews(1L));
 			storage.add(createTestNews(2L));
