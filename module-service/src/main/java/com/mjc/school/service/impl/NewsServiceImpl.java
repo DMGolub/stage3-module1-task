@@ -1,6 +1,6 @@
 package com.mjc.school.service.impl;
 
-import com.mjc.school.repository.Repository;
+import com.mjc.school.repository.NewsRepository;
 import com.mjc.school.repository.domain.News;
 import com.mjc.school.service.NewsService;
 import com.mjc.school.service.dto.NewsResponseDTO;
@@ -17,10 +17,10 @@ public class NewsServiceImpl implements NewsService {
 
 	private static final String NEWS_ID_NAME = "news id";
 
-	private final Repository<News> newsRepository;
+	private final NewsRepository newsRepository;
 	private final Mapper mapper;
 
-	public NewsServiceImpl(final Repository<News> newsRepository) {
+	public NewsServiceImpl(final NewsRepository newsRepository) {
 		this.newsRepository = newsRepository;
 		this.mapper = Mapper.getInstance();
 	}

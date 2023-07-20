@@ -16,7 +16,7 @@ public class NewsRepositoryImpl implements NewsRepository {
 		dataSource = DataSource.getInstance();
 	}
 
-	public NewsRepositoryImpl(DataSource dataSource) {
+	public NewsRepositoryImpl(final DataSource dataSource) {
 		this.dataSource = dataSource;
 	}
 
