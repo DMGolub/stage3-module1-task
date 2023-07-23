@@ -1,8 +1,8 @@
-package com.mjc.school.repository.domain;
+package com.mjc.school.repository.model;
 
 import java.util.Objects;
 
-public class AuthorModel extends BaseModel {
+public class AuthorModel extends BaseEntity {
 
 	private String name;
 

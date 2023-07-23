@@ -2,13 +2,14 @@ package com.mjc.school.service.exception;
 
 public final class EntityNotFoundException extends RuntimeException {
 
-	private static final int ERROR_CODE = 101;
+	private final String errorCode;
 
-	public EntityNotFoundException(String message) {
+	public EntityNotFoundException(final String message, final String errorCode) {
 		super(message);
+		this.errorCode = errorCode;
 	}
 
-	public int getErrorCode() {
-		return ERROR_CODE;
+	public String getErrorCode() {
+		return errorCode;
 	}
 }

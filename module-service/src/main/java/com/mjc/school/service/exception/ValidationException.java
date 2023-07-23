@@ -2,13 +2,14 @@ package com.mjc.school.service.exception;
 
 public class ValidationException extends RuntimeException {
 
-	private static final int ERROR_CODE = 201;
+	private final String errorCode;
 
-	public ValidationException(String message) {
+	public ValidationException(final String message, final String errorCode) {
 		super(message);
+		this.errorCode = errorCode;
 	}
 
-	public int getErrorCode() {
-		return ERROR_CODE;
+	public String getErrorCode() {
+		return errorCode;
 	}
 }

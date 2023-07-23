@@ -1,21 +1,21 @@
 package com.mjc.school.repository.impl;
 
-import com.mjc.school.repository.AuthorRepository;
-import com.mjc.school.repository.domain.AuthorModel;
+import com.mjc.school.repository.Repository;
+import com.mjc.school.repository.model.AuthorModel;
 import com.mjc.school.repository.utility.DataSource;
 
 import java.util.List;
 
-public class AuthorRepositoryImpl implements AuthorRepository {
+public class AuthorRepository implements Repository<AuthorModel> {
 
 	private static final String UNSUPPORTED_MESSAGE = "Operation is not implemented yet";
 	private final DataSource dataSource;
 
-	public AuthorRepositoryImpl() {
+	public AuthorRepository() {
 		dataSource = DataSource.getInstance();
 	}
 
-	public AuthorRepositoryImpl(final DataSource dataSource) {
+	AuthorRepository(final DataSource dataSource) {
 		this.dataSource = dataSource;
 	}
 
@@ -40,12 +40,12 @@ public class AuthorRepositoryImpl implements AuthorRepository {
 	}
 
 	@Override
-	public Boolean delete(final Long id) {
+	public Boolean deleteById(final Long id) {
 		throw new UnsupportedOperationException(UNSUPPORTED_MESSAGE);
 	}
 
 	@Override
-	public boolean isPresent(final Long id) {
+	public Boolean isExistById(final Long id) {
 		return dataSource.getAuthors().stream().anyMatch(a -> a.getId().equals(id));
 	}
 }

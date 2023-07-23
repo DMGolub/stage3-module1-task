@@ -1,7 +1,7 @@
 package com.mjc.school.repository.impl;
 
-import com.mjc.school.repository.NewsRepository;
-import com.mjc.school.repository.domain.NewsModel;
+import com.mjc.school.repository.Repository;
+import com.mjc.school.repository.model.NewsModel;
 import com.mjc.school.repository.utility.DataSource;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Nested;
@@ -12,15 +12,17 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-class NewsRepositoryImplTest {
+class NewsRepositoryTest {
 
 	private final DataSource dataSource = Mockito.mock(DataSource.class);
+	private final Repository<NewsModel> repository = new NewsRepository(dataSource);
 
 	@Nested
 	class TestCreate {
@@ -30,7 +32,6 @@ class NewsRepositoryImplTest {
 			final List<NewsModel> storage = new ArrayList<>();
 			when(dataSource.getNews()).thenReturn(storage);
 
-			NewsRepository repository = new NewsRepositoryImpl(dataSource);
 			NewsModel news = createTestNews(null);
 			NewsModel expected = createTestNews(1L);
 
@@ -45,7 +46,6 @@ class NewsRepositoryImplTest {
 			storage.add(createTestNews(2L));
 			when(dataSource.getNews()).thenReturn(storage);
 
-			NewsRepository repository = new NewsRepositoryImpl(dataSource);
 			NewsModel news = createTestNews(null);
 			NewsModel expected = createTestNews(3L);
 
@@ -60,7 +60,6 @@ class NewsRepositoryImplTest {
 			storage.add(createTestNews(15L));
 			when(dataSource.getNews()).thenReturn(storage);
 
-			NewsRepository repository = new NewsRepositoryImpl(dataSource);
 			NewsModel news = createTestNews(null);
 			NewsModel expected = createTestNews(16L);
 
@@ -73,16 +72,14 @@ class NewsRepositoryImplTest {
 	class TestReadById {
 
 		@Test
-		void readById_shouldReturnNull_whenNewsNotFound() {
+		void readById_shouldThrowNoSuchElementException_whenNewsNotFound() {
 			final List<NewsModel> storage = Arrays.asList(
 				createTestNews(1L),
 				createTestNews(2L)
 			);
 			when(dataSource.getNews()).thenReturn(storage);
 
-			NewsRepository repository = new NewsRepositoryImpl(dataSource);
-
-			assertNull(repository.readById(3L));
+			assertThrows(NoSuchElementException.class, () -> repository.readById(3L));
 			verify(dataSource, times(1)).getNews();
 		}
 
@@ -92,8 +89,6 @@ class NewsRepositoryImplTest {
 			final NewsModel expected = createTestNews(id);
 			final List<NewsModel> storage = Arrays.asList(createTestNews(1L), expected);
 			when(dataSource.getNews()).thenReturn(storage);
-
-			NewsRepository repository = new NewsRepositoryImpl(dataSource);
 
 			assertEquals(expected, repository.readById(id));
 			verify(dataSource, times(1)).getNews();
@@ -105,7 +100,6 @@ class NewsRepositoryImplTest {
 
 		@Test
 		void readAll_shouldReturnEmptyList_whenStorageIsEmpty() {
-			NewsRepository repository = new NewsRepositoryImpl(dataSource);
 			when(dataSource.getNews()).thenReturn(Collections.emptyList());
 
 			assertEquals(Collections.emptyList(), repository.readAll());
@@ -120,8 +114,6 @@ class NewsRepositoryImplTest {
 			);
 			when(dataSource.getNews()).thenReturn(storage);
 
-			NewsRepository repository = new NewsRepositoryImpl(dataSource);
-
 			assertEquals(storage, repository.readAll());
 			verify(dataSource, times(1)).getNews();
 		}
@@ -131,16 +123,14 @@ class NewsRepositoryImplTest {
 	class TestUpdate {
 
 		@Test
-		void update_shouldReturnNull_whenNewsWithGivenIdNotFound() {
+		void update_shouldThrowNoSuchElementException_whenNewsWithGivenIdNotFound() {
 			final List<NewsModel> storage = new ArrayList<>();
 			storage.add(createTestNews(1L));
 			storage.add(createTestNews(2L));
 			when(dataSource.getNews()).thenReturn(storage);
-
-			NewsRepository repository = new NewsRepositoryImpl(dataSource);
 			NewsModel updated = createTestNews(99L);
 
-			assertNull(repository.update(updated));
+			assertThrows(NoSuchElementException.class, () -> repository.update(updated));
 			verify(dataSource, times(1)).getNews();
 		}
 
@@ -151,7 +141,6 @@ class NewsRepositoryImplTest {
 			storage.add(createTestNews(2L));
 			when(dataSource.getNews()).thenReturn(storage);
 
-			NewsRepository repository = new NewsRepositoryImpl(dataSource);
 			final NewsModel updated = createTestNews(2L);
 			updated.setTitle("Updated title");
 			updated.setContent("Updated content");
@@ -165,34 +154,30 @@ class NewsRepositoryImplTest {
 	}
 
 	@Nested
-	class TestDelete {
+	class TestDeleteById {
 
 		@Test
-		void delete_shouldReturnFalse_whenThereIsNoNewsWithGivenId() {
+		void deleteById_shouldReturnFalse_whenThereIsNoNewsWithGivenId() {
 			final List<NewsModel> storage = Arrays.asList(
 				createTestNews(1L),
 				createTestNews(2L)
 			);
 			when(dataSource.getNews()).thenReturn(storage);
 
-			NewsRepository repository = new NewsRepositoryImpl(dataSource);
-
-			assertFalse(repository.delete(99L));
+			assertFalse(repository.deleteById(99L));
 			verify(dataSource, times(1)).getNews();
 		}
 
 		@Test
-		void delete_shouldReturnFalse_whenStorageIsEmpty() {
+		void deleteById_shouldReturnFalse_whenStorageIsEmpty() {
 			when(dataSource.getNews()).thenReturn(Collections.emptyList());
 
-			NewsRepository repository = new NewsRepositoryImpl(dataSource);
-
-			assertFalse(repository.delete(99L));
+			assertFalse(repository.deleteById(99L));
 			verify(dataSource, times(1)).getNews();
 		}
 
 		@Test
-		void delete_shouldReturnTrue_whenNewsWithGivenIdDeleted() {
+		void deleteById_shouldReturnTrue_whenNewsWithGivenIdDeleted() {
 			final List<NewsModel> storage = new ArrayList<>();
 			storage.add(createTestNews(1L));
 			storage.add(createTestNews(2L));
@@ -201,22 +186,51 @@ class NewsRepositoryImplTest {
 			storage.add(createTestNews(5L));
 			when(dataSource.getNews()).thenReturn(storage);
 
-			NewsRepository repository = new NewsRepositoryImpl(dataSource);
-
-			assertTrue(repository.delete(3L));
+			assertTrue(repository.deleteById(3L));
 			verify(dataSource, times(1)).getNews();
 		}
 
 		@Test
-		void delete_shouldDeleteEntity_whenItIsSingleEntityInTheStorage() {
+		void deleteById_shouldDeleteEntity_whenItIsSingleEntityInTheStorage() {
 			final List<NewsModel> storage = new ArrayList<>();
 			storage.add(createTestNews(3L));
 			when(dataSource.getNews()).thenReturn(storage);
 
-			NewsRepository repository = new NewsRepositoryImpl(dataSource);
-
-			assertTrue(repository.delete(3L));
+			assertTrue(repository.deleteById(3L));
 			verify(dataSource, times(1)).getNews();
+		}
+	}
+
+	@Nested
+	class TestIsExistById {
+
+		@Test
+		void isExistById_shouldReturnFalse_whenStorageIsEmpty() {
+			when(dataSource.getNews()).thenReturn(new ArrayList<>());
+
+			assertFalse(repository.isExistById(99L));
+		}
+
+		@Test
+		void isExistById_shouldReturnFalse_whenEntityIsNotFound() {
+			final List<NewsModel> storage = Arrays.asList(
+				createTestNews(1L),
+				createTestNews(2L)
+			);
+			when(dataSource.getNews()).thenReturn(storage);
+
+			assertFalse(repository.isExistById(99L));
+		}
+
+		@Test
+		void isExistById_shouldReturnTrue_whenEntityIsFound() {
+			final List<NewsModel> storage = Arrays.asList(
+				createTestNews(1L),
+				createTestNews(2L)
+			);
+			when(dataSource.getNews()).thenReturn(storage);
+
+			assertTrue(repository.isExistById(2L));
 		}
 	}
 

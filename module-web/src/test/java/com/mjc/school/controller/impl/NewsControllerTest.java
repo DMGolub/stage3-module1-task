@@ -1,22 +1,24 @@
 package com.mjc.school.controller.impl;
 
-import com.mjc.school.controller.NewsController;
-import com.mjc.school.service.NewsService;
-import com.mjc.school.service.dto.NewsRequestDTO;
+import com.mjc.school.controller.Controller;
+import com.mjc.school.service.Service;
+import com.mjc.school.service.dto.NewsRequestDto;
+import com.mjc.school.service.dto.NewsResponseDto;
+import com.mjc.school.service.impl.NewsService;
 import org.junit.jupiter.api.Test;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
-class NewsControllerImplTest {
+class NewsControllerTest {
 
-	private final NewsService newsService = mock(NewsService.class);
-	private final NewsController newsController = new NewsControllerImpl(newsService);
+	private final Service<NewsRequestDto, NewsResponseDto> newsService = mock(NewsService.class);
+	private final Controller<NewsRequestDto, NewsResponseDto> newsController = new NewsController(newsService);
 
 	@Test
 	void save_shouldInvokeServiceSaveMethod_whenInvoked() {
-		final NewsRequestDTO request = new NewsRequestDTO(null, "Title", "Content", 1L);
+		final NewsRequestDto request = new NewsRequestDto(null, "Title", "Content", 1L);
 
 		newsController.create(request);
 		verify(newsService, times(1)).create(request);
@@ -39,7 +41,7 @@ class NewsControllerImplTest {
 
 	@Test
 	void update_shouldInvokeServiceUpdateMethod_whenInvoked() {
-		final NewsRequestDTO request = new NewsRequestDTO(15L, "Title", "Content", 1L);
+		final NewsRequestDto request = new NewsRequestDto(15L, "Title", "Content", 1L);
 
 		newsController.update(request);
 		verify(newsService, times(1)).update(request);
@@ -51,6 +53,6 @@ class NewsControllerImplTest {
 
 		newsController.delete(id);
 
-		verify(newsService, times(1)).delete(id);
+		verify(newsService, times(1)).deleteById(id);
 	}
 }

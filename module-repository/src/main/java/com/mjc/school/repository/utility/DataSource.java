@@ -1,7 +1,7 @@
 package com.mjc.school.repository.utility;
 
-import com.mjc.school.repository.domain.AuthorModel;
-import com.mjc.school.repository.domain.NewsModel;
+import com.mjc.school.repository.model.AuthorModel;
+import com.mjc.school.repository.model.NewsModel;
 
 import java.util.List;
 

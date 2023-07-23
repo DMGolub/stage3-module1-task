@@ -41,5 +41,7 @@ public interface Repository<T> {
 	 * @param id long id of an entity to be removed.
 	 * @return true if entity was removed and false otherwise.
 	 */
-	Boolean delete(final Long id);
+	Boolean deleteById(final Long id);
+
+	Boolean isExistById(Long id);
 }

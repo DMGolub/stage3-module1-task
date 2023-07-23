@@ -1,10 +1,11 @@
 package com.mjc.school.service.impl;
 
-import com.mjc.school.repository.AuthorRepository;
-import com.mjc.school.repository.domain.AuthorModel;
+import com.mjc.school.repository.Repository;
+import com.mjc.school.repository.model.AuthorModel;
+import com.mjc.school.repository.impl.AuthorRepository;
 import com.mjc.school.service.Service;
-import com.mjc.school.service.dto.AuthorRequestDTO;
-import com.mjc.school.service.dto.AuthorResponseDTO;
+import com.mjc.school.service.dto.AuthorRequestDto;
+import com.mjc.school.service.dto.AuthorResponseDto;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
@@ -19,11 +20,11 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-class AuthorServiceImplTest {
+class AuthorServiceTest {
 
-	private final AuthorRepository authorRepository = mock(AuthorRepository.class);
-	private final Service<AuthorRequestDTO, AuthorResponseDTO> authorService =
-		new AuthorServiceImpl(authorRepository);
+	private final Repository<AuthorModel> authorRepository = mock(AuthorRepository.class);
+	private final Service<AuthorRequestDto, AuthorResponseDto> authorService =
+		new AuthorService(authorRepository);
 
 	@Nested
 	class TesReadAll {
@@ -32,7 +33,7 @@ class AuthorServiceImplTest {
 		void readAll_shouldReturnEmptyDTOList_whenRepositoryReturnsEmptyList() {
 			when(authorRepository.readAll()).thenReturn(new ArrayList<>());
 
-			List<AuthorResponseDTO> expected = new ArrayList<>();
+			List<AuthorResponseDto> expected = new ArrayList<>();
 
 			assertEquals(expected, authorService.readAll());
 			verify(authorRepository, times(1)).readAll();
@@ -46,7 +47,7 @@ class AuthorServiceImplTest {
 			);
 			when(authorRepository.readAll()).thenReturn(allAuthors);
 
-			List<AuthorResponseDTO> expected = authorListToAuthorDTOList(allAuthors);
+			List<AuthorResponseDto> expected = authorListToAuthorDTOList(allAuthors);
 
 			assertEquals(expected, authorService.readAll());
 			verify(authorRepository, times(1)).readAll();
@@ -57,14 +58,14 @@ class AuthorServiceImplTest {
 		return new AuthorModel(id, "Author Name");
 	}
 
-	private AuthorResponseDTO authorToDTO(AuthorModel author) {
-		return new AuthorResponseDTO(
+	private AuthorResponseDto authorToDTO(AuthorModel author) {
+		return new AuthorResponseDto(
 			author.getId(),
 			author.getName()
 		);
 	}
 
-	private List<AuthorResponseDTO> authorListToAuthorDTOList(List<AuthorModel> authors) {
+	private List<AuthorResponseDto> authorListToAuthorDTOList(List<AuthorModel> authors) {
 		return authors.stream()
 			.map(this::authorToDTO)
 			.collect(Collectors.toList());

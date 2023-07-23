@@ -1,6 +1,6 @@
 package com.mjc.school.utility;
 
-import com.mjc.school.service.dto.NewsRequestDTO;
+import com.mjc.school.service.dto.NewsRequestDto;
 
 public class NewsRequestInteractiveReader {
 
@@ -16,7 +16,7 @@ public class NewsRequestInteractiveReader {
 		// empty. Hides default public constructor
 	}
 
-	public static NewsRequestDTO read(Long newsId) {
+	public static NewsRequestDto read(Long newsId) {
 		String title = ConsoleReader.readText(
 			TITLE_MESSAGE,
 			NEWS_TITLE_MIN_LENGTH,
@@ -28,6 +28,6 @@ public class NewsRequestInteractiveReader {
 			NEWS_CONTENT_MAX_LENGTH
 		);
 		Long authorId = ConsoleReader.readPositiveLong(AUTHOR_MESSAGE);
-		return new NewsRequestDTO(newsId, title, content, authorId);
+		return new NewsRequestDto(newsId, title, content, authorId);
 	}
 }

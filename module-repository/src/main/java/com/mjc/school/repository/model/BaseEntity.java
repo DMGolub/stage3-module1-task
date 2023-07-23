@@ -1,16 +1,16 @@
-package com.mjc.school.repository.domain;
+package com.mjc.school.repository.model;
 
 import java.util.Objects;
 
-public class BaseModel {
+public abstract class BaseEntity {
 
 	private Long id;
 
-	public BaseModel() {
+	protected BaseEntity() {
 		/* empty */
 	}
 
-	public BaseModel(final Long id) {
+	protected BaseEntity(final Long id) {
 		this.id = id;
 	}
 
@@ -35,7 +35,7 @@ public class BaseModel {
 		if (o == null || getClass() != o.getClass()) {
 			return false;
 		}
-		final BaseModel that = (BaseModel) o;
+		final BaseEntity that = (BaseEntity) o;
 		return Objects.equals(id, that.id);
 	}
 

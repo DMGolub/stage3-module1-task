@@ -1,11 +1,13 @@
 package com.mjc.school.service.impl;
 
-import com.mjc.school.repository.AuthorRepository;
-import com.mjc.school.repository.NewsRepository;
-import com.mjc.school.repository.domain.NewsModel;
+import com.mjc.school.repository.Repository;
+import com.mjc.school.repository.model.AuthorModel;
+import com.mjc.school.repository.model.NewsModel;
+import com.mjc.school.repository.impl.AuthorRepository;
+import com.mjc.school.repository.impl.NewsRepository;
 import com.mjc.school.service.Service;
-import com.mjc.school.service.dto.NewsResponseDTO;
-import com.mjc.school.service.dto.NewsRequestDTO;
+import com.mjc.school.service.dto.NewsResponseDto;
+import com.mjc.school.service.dto.NewsRequestDto;
 import com.mjc.school.service.exception.EntityNotFoundException;
 import com.mjc.school.service.exception.ValidationException;
 import org.junit.jupiter.api.Nested;
@@ -16,6 +18,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -26,25 +29,39 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
-class NewsServiceImplTest {
+class NewsServiceTest {
 
-	private final AuthorRepository authorRepository = mock(AuthorRepository.class);
-	private final NewsRepository newsRepository = mock(NewsRepository.class);
-	private final Service<NewsRequestDTO, NewsResponseDTO> newsService =
-		new NewsServiceImpl(authorRepository, newsRepository);
+	private final Repository<AuthorModel> authorRepository = mock(AuthorRepository.class);
+	private final Repository<NewsModel> newsRepository = mock(NewsRepository.class);
+	private final Service<NewsRequestDto, NewsResponseDto> newsService =
+		new NewsService(authorRepository, newsRepository);
 
 	@Nested
 	class TestCreate {
 
 		@Test
+		void create_shouldThrowValidationException_whenTitleIsNull() {
+			NewsRequestDto nullTitle = new NewsRequestDto(
+				null,
+				null,
+				"Some valid content",
+				2L
+			);
+
+			assertThrows(ValidationException.class, () -> newsService.create(nullTitle));
+			verifyNoInteractions(authorRepository);
+			verifyNoInteractions(newsRepository);
+		}
+
+		@Test
 		void create_shouldThrowValidationException_whenTitleViolatesLengthConstraints() {
-			NewsRequestDTO shortTitle = new NewsRequestDTO(
+			NewsRequestDto shortTitle = new NewsRequestDto(
 				null,
 				"T",
 				"Some valid content",
 				2L
 			);
-			NewsRequestDTO longTitle = new NewsRequestDTO(
+			NewsRequestDto longTitle = new NewsRequestDto(
 				null,
 				"T".repeat(50),
 				"Some valid content",
@@ -52,22 +69,34 @@ class NewsServiceImplTest {
 			);
 
 			assertThrows(ValidationException.class, () -> newsService.create(shortTitle));
-			verifyNoInteractions(authorRepository);
-			verifyNoInteractions(newsRepository);
 			assertThrows(ValidationException.class, () -> newsService.create(longTitle));
 			verifyNoInteractions(authorRepository);
 			verifyNoInteractions(newsRepository);
 		}
 
 		@Test
+		void create_shouldThrowValidationException_whenContentIsNull() {
+			NewsRequestDto nullContent = new NewsRequestDto(
+				null,
+				"Valid title",
+				null,
+				2L
+			);
+
+			assertThrows(ValidationException.class, () -> newsService.create(nullContent));
+			verifyNoInteractions(authorRepository);
+			verifyNoInteractions(newsRepository);
+		}
+
+		@Test
 		void create_shouldThrowValidationException_whenContentViolatesLengthConstraints() {
-			NewsRequestDTO shortContent = new NewsRequestDTO(
+			NewsRequestDto shortContent = new NewsRequestDto(
 				null,
 				"Some valid title",
 				"C",
 				2L
 			);
-			NewsRequestDTO longContent = new NewsRequestDTO(
+			NewsRequestDto longContent = new NewsRequestDto(
 				null,
 				"Some valid title",
 				"C".repeat(300),
@@ -75,8 +104,6 @@ class NewsServiceImplTest {
 			);
 
 			assertThrows(ValidationException.class, () -> newsService.create(shortContent));
-			verifyNoInteractions(authorRepository);
-			verifyNoInteractions(newsRepository);
 			assertThrows(ValidationException.class, () -> newsService.create(longContent));
 			verifyNoInteractions(authorRepository);
 			verifyNoInteractions(newsRepository);
@@ -84,13 +111,19 @@ class NewsServiceImplTest {
 
 		@Test
 		void create_shouldThrowValidationException_whenAuthorIdViolatesConstraints() {
-			NewsRequestDTO nullAuthorId = new NewsRequestDTO(
+			NewsRequestDto nullAuthorId = new NewsRequestDto(
 				null,
 				"Some valid title",
 				"Some valid content",
 				null
 			);
-			NewsRequestDTO negativeAuthorId = new NewsRequestDTO(
+			NewsRequestDto zeroAuthorId = new NewsRequestDto(
+				null,
+				"Some valid title",
+				"Some valid content",
+				0L
+			);
+			NewsRequestDto negativeAuthorId = new NewsRequestDto(
 				null,
 				"Some valid title",
 				"Some valid content",
@@ -98,8 +131,7 @@ class NewsServiceImplTest {
 			);
 
 			assertThrows(ValidationException.class, () -> newsService.create(nullAuthorId));
-			verifyNoInteractions(authorRepository);
-			verifyNoInteractions(newsRepository);
+			assertThrows(ValidationException.class, () -> newsService.create(zeroAuthorId));
 			assertThrows(ValidationException.class, () -> newsService.create(negativeAuthorId));
 			verifyNoInteractions(authorRepository);
 			verifyNoInteractions(newsRepository);
@@ -108,47 +140,53 @@ class NewsServiceImplTest {
 		@Test
 		void create_shouldThrowEntityNotFoundException_whenAuthorNotFound() {
 			final long authorId = 99L;
-			NewsRequestDTO request = new NewsRequestDTO(
+			NewsRequestDto request = new NewsRequestDto(
 				null,
 				"Some valid title",
 				"Some valid content",
 				authorId
 			);
 
-			when(authorRepository.isPresent(authorId)).thenReturn(false);
+			when(authorRepository.isExistById(authorId)).thenReturn(false);
 
 			assertThrows(EntityNotFoundException.class, () -> newsService.create(request));
-			verify(authorRepository, times(1)).isPresent(authorId);
+			verify(authorRepository, times(1)).isExistById(authorId);
 			verifyNoInteractions(newsRepository);
 		}
 
 		@Test
 		void create_shouldReturnSavedEntity_whenValidRequestDtoProvided() {
 			final long authorId = 1L;
-			NewsRequestDTO request = new NewsRequestDTO(
+			NewsRequestDto request = new NewsRequestDto(
 				null,
 				"Some valid title",
 				"Some valid content",
 				authorId
 			);
 			when(newsRepository.create(any())).then(AdditionalAnswers.returnsFirstArg());
-			when(authorRepository.isPresent(authorId)).thenReturn(true);
+			when(authorRepository.isExistById(authorId)).thenReturn(true);
 
-			NewsResponseDTO response = newsService.create(request);
+			NewsResponseDto response = newsService.create(request);
 
-			verify(authorRepository, times(1)).isPresent(authorId);
+			verify(authorRepository, times(1)).isExistById(authorId);
 			verify(newsRepository, times(1)).create(any());
 			assertNotNull(response);
-			assertEquals(request.getTitle(), response.getTitle());
-			assertEquals(request.getContent(), response.getContent());
-			assertNotNull(response.getCreateDate());
-			assertNotNull(response.getLastUpdateDate());
-			assertEquals(request.getAuthorId(), response.getAuthorId());
+			assertEquals(request.title(), response.title());
+			assertEquals(request.content(), response.content());
+			assertNotNull(response.createDate());
+			assertNotNull(response.lastUpdateDate());
+			assertEquals(request.authorId(), response.authorId());
 		}
 	}
 
 	@Nested
 	class TestReadById {
+
+		@Test
+		void readById_shouldThrowValidationException_whenIdIsNull() {
+			assertThrows(ValidationException.class, () -> newsService.readById(null));
+			verifyNoInteractions(newsRepository);
+		}
 
 		@Test
 		void readById_shouldThrowValidationException_whenIdIsNegative() {
@@ -169,21 +207,24 @@ class NewsServiceImplTest {
 		@Test
 		void readById_shouldThrowEntityNotFoundException_whenThereIsNoEntityWithGivenId() {
 			final long id = 99L;
-			when(newsRepository.readById(id)).thenReturn(null);
+			when(newsRepository.isExistById(id)).thenReturn(false);
 
 			assertThrows(EntityNotFoundException.class, () -> newsService.readById(id));
-			verify(newsRepository, times(1)).readById(id);
+			verify(newsRepository, times(1)).isExistById(id);
+			verify(newsRepository, times(0)).readById(any());
 		}
 
 		@Test
 		void readById_shouldReturnDTO_whenEntityWithGivenIdIsFound() {
 			final long id = 2L;
 			final NewsModel toBeFound = createTestNews(id);
+			when(newsRepository.isExistById(id)).thenReturn(true);
 			when(newsRepository.readById(id)).thenReturn(toBeFound);
 
-			NewsResponseDTO expected = newsToDTO(toBeFound);
+			NewsResponseDto expected = newsToDTO(toBeFound);
 
 			assertEquals(expected, newsService.readById(id));
+			verify(newsRepository, times(1)).isExistById(id);
 			verify(newsRepository, times(1)).readById(id);
 		}
 	}
@@ -195,7 +236,7 @@ class NewsServiceImplTest {
 		void readAll_shouldReturnEmptyDTOList_whenRepositoryReturnsEmptyList() {
 			when(newsRepository.readAll()).thenReturn(new ArrayList<>());
 
-			List<NewsResponseDTO> expected = new ArrayList<>();
+			List<NewsResponseDto> expected = new ArrayList<>();
 
 			assertEquals(expected, newsService.readAll());
 			verify(newsRepository, times(1)).readAll();
@@ -209,7 +250,7 @@ class NewsServiceImplTest {
 			);
 			when(newsRepository.readAll()).thenReturn(allNews);
 
-			List<NewsResponseDTO> expected = newsListToNewsDTOList(allNews);
+			List<NewsResponseDto> expected = newsListToNewsDTOList(allNews);
 
 			assertEquals(expected, newsService.readAll());
 			verify(newsRepository, times(1)).readAll();
@@ -220,9 +261,18 @@ class NewsServiceImplTest {
 	class TestUpdate {
 
 		@Test
+		void update_shouldThrowValidationException_whenIdIsNull() {
+			NewsRequestDto request = crateTestRequest(null);
+
+			assertThrows(ValidationException.class, () -> newsService.update(request));
+			verifyNoInteractions(authorRepository);
+			verifyNoInteractions(newsRepository);
+		}
+
+		@Test
 		void update_shouldThrowValidationException_whenIdIsNegative() {
 			final long id = -5L;
-			NewsRequestDTO request = crateTestRequest(id);
+			NewsRequestDto request = crateTestRequest(id);
 
 			assertThrows(ValidationException.class, () -> newsService.update(request));
 			verifyNoInteractions(authorRepository);
@@ -232,7 +282,7 @@ class NewsServiceImplTest {
 		@Test
 		void update_shouldThrowValidationException_whenIdIsZero() {
 			final long id = 0;
-			NewsRequestDTO request = crateTestRequest(id);
+			NewsRequestDto request = crateTestRequest(id);
 
 			assertThrows(ValidationException.class, () -> newsService.update(request));
 			verifyNoInteractions(authorRepository);
@@ -242,35 +292,52 @@ class NewsServiceImplTest {
 		@Test
 		void update_shouldThrowEntityNotFoundException_whenAuthorNotFound() {
 			final long id = 5;
-			NewsRequestDTO request = crateTestRequest(id);
-			when(authorRepository.isPresent(request.getAuthorId())).thenReturn(false);
+			NewsRequestDto request = crateTestRequest(id);
+			when(authorRepository.isExistById(request.authorId()))
+				.thenReturn(false);
 
 			assertThrows(EntityNotFoundException.class, () -> newsService.update(request));
-			verify(authorRepository, times(1)).isPresent(request.getAuthorId());
+			verify(authorRepository, times(1)).isExistById(request.authorId());
 			verifyNoInteractions(newsRepository);
 		}
 
 		@Test
 		void update_shouldThrowEntityNotFoundException_whenEntityWithGivenIdNotFound() {
-			final long id = 99;
-			NewsRequestDTO request = crateTestRequest(id);
-			when(authorRepository.isPresent(request.getAuthorId())).thenReturn(true);
-			when(newsRepository.readById(id)).thenReturn(null);
+			final long id = 99L;
+			NewsRequestDto request = crateTestRequest(id);
+			when(authorRepository.isExistById(request.authorId())).thenReturn(true);
+			when(newsRepository.isExistById(request.id())).thenReturn(false);
+			when(newsRepository.update(any())).thenThrow(new NoSuchElementException());
 
 			assertThrows(EntityNotFoundException.class, () -> newsService.update(request));
-			verify(authorRepository, times(1)).isPresent(request.getAuthorId());
-			verify(newsRepository, times(1)).readById(id);
+			verify(authorRepository, times(1)).isExistById(request.authorId());
+			verify(newsRepository, times(1)).isExistById(request.id());
+			verify(newsRepository, times(0)).update(any());
+		}
+
+		@Test
+		void update_shouldThrowValidationException_whenTitleIsNull() {
+			NewsRequestDto nullTitle = new NewsRequestDto(
+				1L,
+				null,
+				"Some valid content",
+				2L
+			);
+
+			assertThrows(ValidationException.class, () -> newsService.update(nullTitle));
+			verifyNoInteractions(authorRepository);
+			verifyNoInteractions(newsRepository);
 		}
 
 		@Test
 		void update_shouldThrowValidationException_whenTitleViolatesLengthConstraints() {
-			NewsRequestDTO shortTitle = new NewsRequestDTO(
+			NewsRequestDto shortTitle = new NewsRequestDto(
 				1L,
 				"T",
 				"Some valid content",
 				2L
 			);
-			NewsRequestDTO longTitle = new NewsRequestDTO(
+			NewsRequestDto longTitle = new NewsRequestDto(
 				1L,
 				"T".repeat(50),
 				"Some valid content",
@@ -278,22 +345,34 @@ class NewsServiceImplTest {
 			);
 
 			assertThrows(ValidationException.class, () -> newsService.update(shortTitle));
-			verifyNoInteractions(authorRepository);
-			verifyNoInteractions(newsRepository);
 			assertThrows(ValidationException.class, () -> newsService.update(longTitle));
 			verifyNoInteractions(authorRepository);
 			verifyNoInteractions(newsRepository);
 		}
 
 		@Test
+		void update_shouldThrowValidationException_whenContentIsNull() {
+			NewsRequestDto nullContent = new NewsRequestDto(
+				1L,
+				"Some valid title",
+				null,
+				2L
+			);
+
+			assertThrows(ValidationException.class, () -> newsService.update(nullContent));
+			verifyNoInteractions(authorRepository);
+			verifyNoInteractions(newsRepository);
+		}
+
+		@Test
 		void update_shouldThrowValidationException_whenContentViolatesLengthConstraints() {
-			NewsRequestDTO shortContent = new NewsRequestDTO(
+			NewsRequestDto shortContent = new NewsRequestDto(
 				1L,
 				"Some valid title",
 				"C",
 				2L
 			);
-			NewsRequestDTO longContent = new NewsRequestDTO(
+			NewsRequestDto longContent = new NewsRequestDto(
 				1L,
 				"Some valid title",
 				"C".repeat(300),
@@ -301,8 +380,6 @@ class NewsServiceImplTest {
 			);
 
 			assertThrows(ValidationException.class, () -> newsService.update(shortContent));
-			verifyNoInteractions(authorRepository);
-			verifyNoInteractions(newsRepository);
 			assertThrows(ValidationException.class, () -> newsService.update(longContent));
 			verifyNoInteractions(authorRepository);
 			verifyNoInteractions(newsRepository);
@@ -310,13 +387,13 @@ class NewsServiceImplTest {
 
 		@Test
 		void update_shouldThrowValidationException_whenAuthorIdViolatesConstraints() {
-			NewsRequestDTO nullAuthorId = new NewsRequestDTO(
+			NewsRequestDto nullAuthorId = new NewsRequestDto(
 				1L,
 				"Some valid title",
 				"Some valid content",
 				null
 			);
-			NewsRequestDTO negativeAuthorId = new NewsRequestDTO(
+			NewsRequestDto negativeAuthorId = new NewsRequestDto(
 				1L,
 				"Some valid title",
 				"Some valid content",
@@ -324,8 +401,6 @@ class NewsServiceImplTest {
 			);
 
 			assertThrows(ValidationException.class, () -> newsService.update(nullAuthorId));
-			verifyNoInteractions(authorRepository);
-			verifyNoInteractions(newsRepository);
 			assertThrows(ValidationException.class, () -> newsService.update(negativeAuthorId));
 			verifyNoInteractions(authorRepository);
 			verifyNoInteractions(newsRepository);
@@ -334,7 +409,7 @@ class NewsServiceImplTest {
 		@Test
 		void update_shouldReturnUpdatedEntity_whenValidRequestDtoProvided() {
 			final long id = 1L;
-			NewsRequestDTO request = new NewsRequestDTO(
+			NewsRequestDto request = new NewsRequestDto(
 				id,
 				"Some updated title",
 				"Some updated content",
@@ -356,58 +431,77 @@ class NewsServiceImplTest {
 				LocalDateTime.now(),
 				2L
 			);
-			when(authorRepository.isPresent(request.getAuthorId())).thenReturn(true);
+			when(authorRepository.isExistById(request.authorId())).thenReturn(true);
+			when(newsRepository.isExistById(request.id())).thenReturn(true);
 			when(newsRepository.readById(id)).thenReturn(previous);
 			when(newsRepository.update(any())).thenReturn(updated);
 
-			NewsResponseDTO response = newsService.update(request);
+			NewsResponseDto response = newsService.update(request);
 
-			verify(authorRepository, times(1)).isPresent(request.getAuthorId());
-			verify(newsRepository, times(1)).readById(id);
+			verify(authorRepository, times(1)).isExistById(request.authorId());
+			verify(newsRepository, times(1)).isExistById(request.id());
 			verify(newsRepository, times(1)).update(any());
 			assertNotNull(response);
-			assertEquals(request.getTitle(), response.getTitle());
-			assertEquals(request.getContent(), response.getContent());
-			assertEquals(previous.getCreateDate(), response.getCreateDate());
-			assertEquals(request.getAuthorId(), response.getAuthorId());
+			assertEquals(request.title(), response.title());
+			assertEquals(request.content(), response.content());
+			assertEquals(previous.getCreateDate(), response.createDate());
+			assertEquals(request.authorId(), response.authorId());
 		}
 	}
 
 	@Nested
-	class TestDelete {
+	class TestDeleteById {
 
 		@Test
-		void delete_shouldThrowValidationException_whenIdIsNegative() {
+		void deleteById_shouldThrowValidationException_whenIdIsNull() {
+			assertThrows(ValidationException.class, () -> newsService.deleteById(null));
+			verifyNoInteractions(newsRepository);
+		}
+
+		@Test
+		void deleteById_shouldThrowValidationException_whenIdIsNegative() {
 			final long id = -5L;
-
-			assertThrows(ValidationException.class, () -> newsService.delete(id));
+			assertThrows(ValidationException.class, () -> newsService.deleteById(id));
 			verifyNoInteractions(newsRepository);
 		}
 
 		@Test
-		void delete_shouldThrowValidationException_whenIdIsZero() {
+		void deleteById_shouldThrowValidationException_whenIdIsZero() {
 			final long id = 0;
-
-			assertThrows(ValidationException.class, () -> newsService.delete(id));
+			assertThrows(ValidationException.class, () -> newsService.deleteById(id));
 			verifyNoInteractions(newsRepository);
 		}
 
 		@Test
-		void delete_shouldReturnTrue_whenRepositoryDeletesEntityById() {
+		void deleteById_shouldThrowEntityNotFoundException_whenThereIsNoEntityWithGivenId() {
 			final long id = 5L;
-			when(newsRepository.delete(id)).thenReturn(true);
+			when(newsRepository.isExistById(id)).thenReturn(false);
 
-			assertTrue(newsService.delete(id));
-			verify(newsRepository, times(1)).delete(id);
+			assertThrows(EntityNotFoundException.class, () -> newsService.deleteById(id));
+			verify(newsRepository, times(1)).isExistById(id);
+			verify(newsRepository, times(0)).deleteById(id);
 		}
 
 		@Test
-		void delete_shouldReturnFalse_whenRepositoryDoesNotDeletesEntityById() {
-			final long id = 99L;
-			when(newsRepository.delete(id)).thenReturn(false);
+		void deleteById_shouldReturnTrue_whenRepositoryDeletesEntityById() {
+			final long id = 5L;
+			when(newsRepository.isExistById(id)).thenReturn(true);
+			when(newsRepository.deleteById(id)).thenReturn(true);
 
-			assertFalse(newsService.delete(id));
-			verify(newsRepository, times(1)).delete(id);
+			assertTrue(newsService.deleteById(id));
+			verify(newsRepository, times(1)).isExistById(id);
+			verify(newsRepository, times(1)).deleteById(id);
+		}
+
+		@Test
+		void deleteById_shouldReturnFalse_whenRepositoryDoesNotDeletesEntityById() {
+			final long id = 99L;
+			when(newsRepository.isExistById(id)).thenReturn(true);
+			when(newsRepository.deleteById(id)).thenReturn(false);
+
+			assertFalse(newsService.deleteById(id));
+			verify(newsRepository, times(1)).isExistById(id);
+			verify(newsRepository, times(1)).deleteById(id);
 		}
 	}
 
@@ -422,12 +516,12 @@ class NewsServiceImplTest {
 		);
 	}
 
-	private NewsRequestDTO crateTestRequest(Long newsId) {
-		return new NewsRequestDTO(newsId, "Title", "Content", 1L);
+	private NewsRequestDto crateTestRequest(Long newsId) {
+		return new NewsRequestDto(newsId, "Title", "Content", 1L);
 	}
 
-	private NewsResponseDTO newsToDTO(NewsModel news) {
-		return new NewsResponseDTO(
+	private NewsResponseDto newsToDTO(NewsModel news) {
+		return new NewsResponseDto(
 			news.getId(),
 			news.getTitle(),
 			news.getContent(),
@@ -437,7 +531,7 @@ class NewsServiceImplTest {
 		);
 	}
 
-	private List<NewsResponseDTO> newsListToNewsDTOList(List<NewsModel> news) {
+	private List<NewsResponseDto> newsListToNewsDTOList(List<NewsModel> news) {
 		return news.stream()
 			.map(this::newsToDTO)
 			.collect(Collectors.toList());

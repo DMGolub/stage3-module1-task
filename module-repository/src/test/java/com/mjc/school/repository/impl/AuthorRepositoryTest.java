@@ -1,7 +1,7 @@
 package com.mjc.school.repository.impl;
 
-import com.mjc.school.repository.AuthorRepository;
-import com.mjc.school.repository.domain.AuthorModel;
+import com.mjc.school.repository.Repository;
+import com.mjc.school.repository.model.AuthorModel;
 import com.mjc.school.repository.utility.DataSource;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -12,21 +12,23 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-class AuthorRepositoryImplTest {
+class AuthorRepositoryTest {
 
 	private final DataSource dataSource = Mockito.mock(DataSource.class);
+	private final Repository<AuthorModel> repository = new AuthorRepository(dataSource);
 
 	@Nested
 	class TestReadAll {
 
 		@Test
 		void readAll_shouldReturnEmptyList_whenStorageIsEmpty() {
-			AuthorRepository repository = new AuthorRepositoryImpl(dataSource);
 			when(dataSource.getAuthors()).thenReturn(Collections.emptyList());
 
 			assertEquals(Collections.emptyList(), repository.readAll());
@@ -41,49 +43,41 @@ class AuthorRepositoryImplTest {
 			);
 			when(dataSource.getAuthors()).thenReturn(storage);
 
-			AuthorRepository repository = new AuthorRepositoryImpl(dataSource);
-
 			assertEquals(storage, repository.readAll());
 			verify(dataSource, times(1)).getAuthors();
 		}
 	}
 
 	@Nested
-	class TestIsPresent {
+	class TestIsExistById {
 
 		@Test
-		void isPresent_shouldReturnFalse_whenStorageIsEmpty() {
+		void isExistById_shouldReturnFalse_whenStorageIsEmpty() {
 			when(dataSource.getAuthors()).thenReturn(new ArrayList<>());
 
-			AuthorRepository repository = new AuthorRepositoryImpl(dataSource);
-
-			assertFalse(repository.isPresent(99L));
+			assertFalse(repository.isExistById(99L));
 		}
 
 		@Test
-		void isPresent_shouldReturnFalse_whenEntityIsNotFound() {
+		void isExistById_shouldReturnFalse_whenEntityIsNotFound() {
 			final List<AuthorModel> storage = Arrays.asList(
 				createTestAuthor(1L),
 				createTestAuthor(2L)
 			);
 			when(dataSource.getAuthors()).thenReturn(storage);
 
-			AuthorRepository repository = new AuthorRepositoryImpl(dataSource);
-
-			assertFalse(repository.isPresent(99L));
+			assertFalse(repository.isExistById(99L));
 		}
 
 		@Test
-		void isPresent_shouldReturnTrue_whenEntityIsFound() {
+		void isExistById_shouldReturnTrue_whenEntityIsFound() {
 			final List<AuthorModel> storage = Arrays.asList(
 				createTestAuthor(1L),
 				createTestAuthor(2L)
 			);
 			when(dataSource.getAuthors()).thenReturn(storage);
 
-			AuthorRepository repository = new AuthorRepositoryImpl(dataSource);
-
-			assertTrue(repository.isPresent(2L));
+			assertTrue(repository.isExistById(2L));
 		}
 	}
 

@@ -50,5 +50,5 @@ public interface Service<T, R> {
 	 * @return true if entity was removed and false otherwise.
 	 * @throws ValidationException if id violates positive constraint.
 	 */
-	Boolean delete(final Long id) throws ValidationException;
+	Boolean deleteById(final Long id) throws ValidationException;
 }
